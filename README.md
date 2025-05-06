@@ -50,19 +50,19 @@ $ python3 -m PATH/TO/venv_name
 HTTPS METHOD (Recommended)
 
 ```
-$ git clone https://github.com/vedantkothari07/JAVA__vedantk3_aidanw26_alexl175_jonathanm764.git     
+$ git clone https://github.com/1Teee/tophertime-studios__tawabb_alexl175_jacobl153_jonathanm764.git     
 ```
 
 SSH METHOD (Requires SSH Key to be set up):
 
 ```
-$ git clone git@github.com:vedantkothari07/JAVA__vedantk3_aidanw26_alexl175_jonathanm764.git
+$ git clone git@github.com:1Teee/tophertime-studios__tawabb_alexl175_jacobl153_jonathanm764.git
 ```
 
 4. Navigate to project directory
 
 ```
-$ cd PATH/TO/JAVA__vedantk3_aidanw26_alexl175_jonathanm764/
+$ cd PATH/TO/tophertime-studios__tawabb_alexl175_jacobl153_jonathanm764/
 ```
 
 5. Install dependencies
@@ -75,7 +75,7 @@ $ pip install -r requirements.txt
 
 ## Best Way
 
-1. Visit https://www.rsobesity.vkothari50.tech/ on any modern browser
+1. Visit (placeholder for domain) on any modern browser
 2. Enjoy!
 
 ## The DEVO Way
@@ -83,7 +83,7 @@ $ pip install -r requirements.txt
 1. Navigate to project directory:
 
 ```
-$ cd PATH/TO/JAVA__vedantk3_aidanw26_alexl175_jonathanm764/
+$ cd PATH/TO/studios__tawabb_alexl175_jacobl153_jonathanm764.git/
 ```
  
 2. Navigate to 'app' directory
