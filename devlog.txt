@@ -1,0 +1,10 @@
+FORMAT:
+firstL -- TIMESTAMP\n (e.g.: tawabB -- 1969-04-20 12:34)
+
+tawabB -- 2025-05-05 10:55
+* repo creation! ITS ALIVE!!!
+* added deliverables to repo
+* uploaded flag
+
+tawabB -- 2025-05-07 21:06
+* uploaded (revised!) design doc
