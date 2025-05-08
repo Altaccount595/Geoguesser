@@ -7,4 +7,6 @@ tawabB -- 2025-05-05 10:55
 * uploaded flag
 
 tawabB -- 2025-05-07 21:06
-* uploaded (revised!) design doc
+* uploaded (revised!) design doc:
+ - replaced redundant d3 with apex
+ - removed long/lat from database, streetviews will be random not preselected 
