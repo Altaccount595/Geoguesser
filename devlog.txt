@@ -9,4 +9,9 @@ tawabB -- 2025-05-05 10:55
 tawabB -- 2025-05-07 21:06
 * uploaded (revised!) design doc:
  - replaced redundant d3 with apex
- - removed long/lat from database, streetviews will be random not preselected 
+ - removed long/lat from database, streetviews will be random not preselected
+
+alexL -- 2025-05-08 10:40
+* added working flask app
+* finished repo creation
+* added requirements
