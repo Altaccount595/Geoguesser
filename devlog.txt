@@ -19,3 +19,8 @@ alexL -- 2025-05-08 10:40
 alexL -- 2025-05-08 22:50
 * added db for users
 * added auth.html and auth route
+
+tawabB -- 2025-05-09 10:47
+* added db functions:
+  - add_user
+  - add_score

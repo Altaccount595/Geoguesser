@@ -11,7 +11,7 @@ DB_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "users.db")
 
 def get_db_connection():
     conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row          
+    conn.row_factory = sqlite3.Row
     return conn
 
 def create_db():
@@ -23,12 +23,20 @@ def create_db():
             username TEXT UNIQUE NOT NULL,
             password_hash TEXT NOT NULL
         );
+
+        CREATE TABLE IF NOT EXISTS scores (
+            score_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            region TEXT NOT NULL,
+            points INTEGER NOT NULL,
+            distance REAL NOT NULL
+        );
     """)
     conn.commit()
     conn.close()
 
 def add_user(username, password):
-    create_db()                              
+    create_db()
     conn = get_db_connection()
     cur = conn.cursor()
     pw_hash = generate_password_hash(password)
@@ -52,3 +60,11 @@ def check_user(username, password):
     row = cur.fetchone()
     conn.close()
     return row and check_password_hash(row["password_hash"], password)
+
+def add_score(username, region, points, distance):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT user_id FROM users WHERE username = ?", (username,))
+    id = cur.fetchone()
+    cur.execute("INSERT INTO scores (user_id, region, points, distance) VALUES (?, ?, ?, ?)", (id, region, points, distance,))
+    return ok
