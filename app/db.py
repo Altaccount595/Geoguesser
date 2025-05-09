@@ -60,3 +60,11 @@ def check_user(username, password):
     row = cur.fetchone()
     conn.close()
     return row and check_password_hash(row["password_hash"], password)
+
+def add_score(username, region, points, distance):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT user_id FROM users WHERE username = ?", (username,))
+    id = cur.fetchone()
+    cur.execute("INSERT INTO scores (user_id, region, points, distance) VALUES (?, ?, ?, ?)", (id, region, points, distance,))
+    return ok
