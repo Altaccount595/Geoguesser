@@ -15,3 +15,7 @@ alexL -- 2025-05-08 10:40
 * added working flask app
 * finished repo creation
 * added requirements
+
+alexL -- 2025-05-08 22:50
+* added db for users
+* added auth.html and auth route
