@@ -1,8 +1,9 @@
 from flask import Flask, render_template, url_for, session, request, redirect, jsonify, flash
 from db import getRandLoc
 import db
-import os
+import os, math
 from api_handle import image
+RADIUS = 6371.0
 
 app = Flask(__name__)
 
@@ -10,13 +11,29 @@ app.secret_key = os.urandom(32)
 
 db.create_db()
 
-@app.route("/")
+@app.route("/", methods = ['GET', 'POST'])
 def home():
     if "username" not in session:
         return redirect(url_for("auth"))
     location = getRandLoc()
     image(location[0], location[1])
+    session['location'] = {
+        'lat' : location[0],
+        'long' : location[1]
+    }
     return render_template("home.html", username=session["username"], img = 'streetview_image.jpg')
+
+def check_guess():
+    if request.method == "POST":
+        lat = request.form['lat']
+        print(lat)
+        answer= [session['location']['lat'], session['location']['long']]
+        check = (answer == guess)
+        if check:
+            score = 1
+        else:
+            score = 0
+        return redirect(url_for("home"))
 
 @app.route('/auth', methods=["GET", "POST"])
 def auth():
@@ -45,6 +62,20 @@ def logout():
 def leaderboard():
     scores = db.top_scores()       
     return render_template("leaderboard.html", scores=scores)
+
+def toRadians(degree):
+    return degree *(math.pi / 180.0)
+
+def haversine(lat1, lon1, lat2, lon2):
+    lat1 = toRadians(lat1)
+    lon1 = toRadians(lon1)
+    lat2 = toRadians(lat2)
+    lon2 = toRadians(lon2)
+    dLat = lat2 - lat1
+    dLon = lon2 - lon1
+    a = math.sin(dLat / 2) * math.sin(dLat / 2) + math.cos(lat1) * math.cos(lat2) * math.sin(dLon / 2) * math.sin(dLon / 2)
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    return RADIUS * c
 
 if __name__ == "__main__":
     app.debug = True

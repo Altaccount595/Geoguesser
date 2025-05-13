@@ -11,6 +11,12 @@
   </nav>
   <h2>HELLO {{ username }}!</h2>
   <img src="{{url_for('static', filename=img) }}" alt="my img">
+  <form method="POST">
+    <input type="text" id="lat", name="lat" required>
+    <input type="text" id="long", name="long" required>
+    <button type="submit">Submit</button>
+  </form>
+  
   <p><a href="{{ url_for('logout') }}">Log out</a></p>
   <div class="intro-paragraph">
     Welcome to Geoguessr remastered!
