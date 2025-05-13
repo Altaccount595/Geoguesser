@@ -1,9 +1,38 @@
-import requests, random
+import requests, random, urllib.parse
+import numpy as np
 from PIL import Image
+from db import getRandLoc #, getRandAddress
+def images_are_equal(img1_path, img2_path):
+    img1 = Image.open(img1_path).convert('RGB')
+    img2 = Image.open(img2_path).convert('RGB')
+    return np.array_equal(np.array(img1), np.array(img2))
 
-def image():
-	url = f'https://maps.googleapis.com/maps/api/streetview?size=600x300&location=Z%C3%BCrich&key={getKey()}'
+def address_lat():
+	address = getRandAddress()
+	key=getKey()
+	encoded_address=urllib.parse.quote(address)
+	url = f"https://maps.googleapis.com/maps/api/geocode/json?address={encoded_address}&key={key}"
 	response = requests.get(url)
+	data= response.json()
+	if data['status'] == 'OK':
+		location = data['results'][0]['geometry']['location']
+		lat = location['lat']
+		lng = location['lng']
+		print(f"Latitude: {lat}, Longitude: {lng}")
+	else:
+		print("Geocoding Error", data['status'])
+
+	return [lat, lng]
+def image():
+	loc = getRandLoc()
+	url = f'https://maps.googleapis.com/maps/api/streetview?size=600x300&location={loc[0]},{loc[1]}&key={getKey()}'
+	print(url)
+	#meta_url= "https://maps.googleapis.com/maps/api/streetview/metadata"
+	#params={
+	#	'location':f"{loc[0]}, {loc[1]}",
+	#	'key':getKey()}
+	response = requests.get(url)
+	print(response)
 	if response.status_code == 200:
 		with open('streetview_image.jpg', 'wb') as file:
 			print('attempting to download')
@@ -11,8 +40,11 @@ def image():
 		print("Image successfully downloaded")
 	else:
 		print(f"Error: {response.status_code}")
-	image = Image.open('streetview_image.jpg')
-	image.show()
+	if (not images_are_equal('bad.jpg', 'streetview_image.jpg')):
+		img = Image.open('streetview_image.jpg')
+		img.show()
+	else:
+		image()
 
 def getKey():
 	try:
