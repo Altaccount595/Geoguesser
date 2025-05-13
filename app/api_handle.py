@@ -33,14 +33,14 @@ def image(lat,long,heading=0, fov=90):
 	response = requests.get(url)
 	print(response)
 	if response.status_code == 200:
-		with open('streetview_image.jpg', 'wb') as file:
+		with open('static/streetview_image.jpg', 'wb') as file:
 			print('attempting to download')
 			file.write(response.content)
 		print("Image successfully downloaded")
 	else:
 		print(f"Error: {response.status_code}")
-	if (not images_are_equal('bad.jpg', 'streetview_image.jpg')):
-		img = Image.open('streetview_image.jpg')
+	if (not images_are_equal('static/bad.jpg', 'static/streetview_image.jpg')):
+		img = Image.open('static/streetview_image.jpg')
 		img.show()
 	else:
 		location = getRandLoc()
