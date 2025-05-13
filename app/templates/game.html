@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title> DevoGuessr </title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Home</title>
+		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+        <link rel="stylesheet" href="css/bruh.css">
+        
+</head>
+<body>
+    <h1> Welcome to DevoGuessr! </h1>
+    <!--change this to however we get the image from-->
+    <id=image img src="{{ image_link }}">
+
+    <div id="map"></div>
+    <p id="coords">Click on the map to get latitude and longitude.</p>
+
+    <form action="{{url_for('result')}}" method="POST">
+        <input id="input" name="input" value="{{lat, lon}}" required readonly="readonly">
+        <button type="submit">Submit Answer</button>
+    </form>
+
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script>
+        // Initialize the map
+        var map = L.map('map').setView([40, -95], 4);
+        var lat = 0
+        var lon = 0
+            const textBox = document.getElementById("input");
+            textBox.value = 0 + ", " + 0;
+        // Add OpenStreetMap layer
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        //attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+        map.on('click', function(e) {
+            L.popup({closeButton: false})
+            .setLatLng(e.latlng)
+            .setContent('Your guess')
+            .openOn(map);
+            
+            lat = e.latlng.lat.toFixed(4);
+            lon = e.latlng.lng.toFixed(4);
+            console.log("these are the coords:" + lat + lon)
+
+            const textBox = document.getElementById("input");
+            textBox.value = lat + ", " + lon;
+
+        });
+    </script>
+
+
+
+</body>
+</html>

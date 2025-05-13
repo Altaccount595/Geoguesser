@@ -1,0 +1,16 @@
+body {
+    background-color: lightslategray;
+    color: white
+}  
+#map { height: 500px; width: 45%; float: right}
+body, html {
+    max-width: 100%;
+    height: auto;
+    width: auto\9;
+}
+#image {
+    height: auto;
+    width: auto;
+    max-width: 500px;
+    max-height: 500px;
+}
