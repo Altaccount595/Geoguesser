@@ -1,6 +1,8 @@
 from flask import Flask, render_template, url_for, session, request, redirect, jsonify, flash
-import os
+from db import getRandLoc
 import db
+import os
+from api_handle import image
 
 app = Flask(__name__)
 
@@ -12,7 +14,9 @@ db.create_db()
 def home():
     if "username" not in session:
         return redirect(url_for("auth"))
-    return render_template("home.html", username=session["username"])
+    location = getRandLoc()
+    image(location[0], location[1])
+    return render_template("home.html", username=session["username"], img = 'static/streetview_image.jpg')
 
 @app.route('/auth', methods=["GET", "POST"])
 def auth():

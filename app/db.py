@@ -19,7 +19,6 @@ def create_db():
     conn = get_db_connection()
     cur = conn.cursor()
     cur.executescript("""
-        DROP TABLE IF EXISTS loc;
         DROP TABLE IF EXISTS address;
 
         CREATE TABLE IF NOT EXISTS users (

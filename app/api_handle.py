@@ -55,7 +55,3 @@ def getKey():
 	except:
 		print('error')
 	return key
-location = getRandLoc()
-lat = location[0]
-long = location[1]
-image(lat, long)
