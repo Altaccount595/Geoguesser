@@ -24,3 +24,7 @@ tawabB -- 2025-05-09 10:47
 * added db functions:
   - add_user
   - add_score
+
+alexL -- 2025-05-12 21:30
+* added leaderboard db function, fixed db
+* added leaderboard route

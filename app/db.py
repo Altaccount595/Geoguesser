@@ -17,7 +17,7 @@ def get_db_connection():
 def create_db():
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute("""
+    cur.executescript("""
         CREATE TABLE IF NOT EXISTS users (
             user_id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE NOT NULL,
@@ -28,6 +28,7 @@ def create_db():
             score_id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL,
             region TEXT NOT NULL,
+            mode TEXT NOT NULL DEFAULT 'untimed',
             points INTEGER NOT NULL,
             distance REAL NOT NULL
         );
@@ -61,10 +62,31 @@ def check_user(username, password):
     conn.close()
     return row and check_password_hash(row["password_hash"], password)
 
-def add_score(username, region, points, distance):
+def add_score(username, region, points, distance, mode="untimed"):
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute("SELECT user_id FROM users WHERE username = ?", (username,))
     id = cur.fetchone()
-    cur.execute("INSERT INTO scores (user_id, region, points, distance) VALUES (?, ?, ?, ?)", (id, region, points, distance,))
-    return ok
+    if not id:                     
+        conn.close()
+        return False
+    user_id = id["user_id"]
+    cur.execute("INSERT INTO scores (user_id, region, mode, points, distance) VALUES (?, ?, ?, ?, ?)", (user_id, region, mode, points, distance,))
+    conn.commit()
+    conn.close()
+    return True 
+
+def top_scores():
+    conn = get_db_connection()
+    cur  = conn.cursor()
+
+    cur.execute("""
+        SELECT u.username, s.region, s.points, s.distance
+        FROM scores AS s
+        JOIN users AS u ON u.user_id = s.user_id
+        ORDER BY s.points DESC, s.distance ASC;
+    """)
+
+    rows = cur.fetchall()
+    conn.close()
+    return rows

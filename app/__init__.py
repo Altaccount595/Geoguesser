@@ -37,6 +37,11 @@ def logout():
     session.pop('username', None)
     return redirect(url_for('auth'))
 
+@app.route("/leaderboard")
+def leaderboard():
+    scores = db.top_scores()       
+    return render_template("leaderboard.html", scores=scores)
+
 if __name__ == "__main__":
     app.debug = True
     app.run()
