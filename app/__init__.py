@@ -16,7 +16,7 @@ def home():
         return redirect(url_for("auth"))
     location = getRandLoc()
     image(location[0], location[1])
-    return render_template("home.html", username=session["username"], img = 'static/streetview_image.jpg')
+    return render_template("home.html", username=session["username"], img = 'streetview_image.jpg')
 
 @app.route('/auth', methods=["GET", "POST"])
 def auth():
