@@ -23,7 +23,7 @@ def home():
     }
     if request.method  == 'POST':
         score = check_guess()
-        return redirect(url_for('home'))
+        return render_template("home.html", username=session["username"], img = 'streetview_image.jpg')
     return render_template("home.html", username=session["username"], img = 'streetview_image.jpg')
 
 def check_guess():
