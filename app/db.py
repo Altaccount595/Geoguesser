@@ -20,7 +20,6 @@ def create_db():
     cur = conn.cursor()
     cur.executescript("""
         DROP TABLE IF EXISTS address;
-
         CREATE TABLE IF NOT EXISTS users (
             user_id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE NOT NULL,
@@ -102,7 +101,7 @@ def loc_db():
     count = 0
     conn = get_db_connection()
     cur = conn.cursor()
-    with open('../statewide.csv', newline='') as csvfile:
+    with open('../../city_of_new_york.csv', newline='') as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
             #print(row[0], row[1])
@@ -116,7 +115,6 @@ def loc_db():
     conn.commit()
     conn.close()
 '''
-
 # creates db for addresses
 '''
 def address_db():
