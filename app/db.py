@@ -14,6 +14,7 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
+# creates db for users and locations
 def create_db():
     conn = get_db_connection()
     cur = conn.cursor()
@@ -53,7 +54,7 @@ def create_db():
     conn.commit()
     conn.close()
 
-
+# add users to users database
 def add_user(username, password):
     create_db()
     conn = get_db_connection()
@@ -72,6 +73,7 @@ def add_user(username, password):
         conn.close()
     return ok
 
+# check users password and username
 def check_user(username, password):
     conn = get_db_connection()
     cur = conn.cursor()
@@ -80,6 +82,7 @@ def check_user(username, password):
     conn.close()
     return row and check_password_hash(row["password_hash"], password)
 
+# adds users scores
 def add_score(username, region, points, distance, mode="untimed"):
     conn = get_db_connection()
     cur = conn.cursor()
@@ -94,6 +97,8 @@ def add_score(username, region, points, distance, mode="untimed"):
     conn.close()
     return True
 
+# creates db for locations (only works for new york right now, so subject to change)
+'''
 def loc_db():
     count = 0
     conn = get_db_connection()
@@ -111,6 +116,9 @@ def loc_db():
             count += 1
     conn.commit()
     conn.close()
+'''
+
+# creates db for addresses
 '''
 def address_db():
     count = 0
@@ -130,6 +138,8 @@ def address_db():
     conn.commit()
     conn.close()
 '''
+
+#gets random location, this is also subject to change with the use of Google Geocoding API in order to avoid unintellgible coords
 def getRandLoc():
     conn = get_db_connection()
     cur = conn.cursor()
@@ -143,6 +153,8 @@ def getRandLoc():
     #print(lat_long)
     conn.close()
     return lat_long
+
+# gets random address (should be used to ensure proper coords)
 '''
 def getRandAddress():
     conn = get_db_connection()
@@ -158,6 +170,8 @@ def getRandAddress():
     conn.close()
     return address
 '''
+
+#gets top scores to serve to leaderboard
 def top_scores():
     conn = get_db_connection()
     cur  = conn.cursor()
@@ -175,4 +189,3 @@ def top_scores():
 
 #create_db()
 #loc_db()
-
