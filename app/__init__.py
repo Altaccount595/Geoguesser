@@ -21,19 +21,23 @@ def home():
         'lat' : location[0],
         'long' : location[1]
     }
+    if request.method  == 'POST':
+        score = check_guess()
+        return redirect(url_for('home'))
     return render_template("home.html", username=session["username"], img = 'streetview_image.jpg')
 
 def check_guess():
-    if request.method == "POST":
-        lat = request.form['lat']
-        print(lat)
-        answer= [session['location']['lat'], session['location']['long']]
-        check = (answer == guess)
-        if check:
-            score = 1
-        else:
-            score = 0
-        return redirect(url_for("home"))
+    lat = float(request.form.get('lat'))
+    long = float(request.form.get('long'))
+    guess =  [lat, long]
+    print(lat)
+    answer= [session['location']['lat'], session['location']['long']]
+    check = (answer == guess)
+    if check:
+        score = 1
+    else:
+        score = 0
+    return score
 
 @app.route('/auth', methods=["GET", "POST"])
 def auth():

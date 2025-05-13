@@ -12,8 +12,8 @@
   <h2>HELLO {{ username }}!</h2>
   <img src="{{url_for('static', filename=img) }}" alt="my img">
   <form method="POST">
-    <input type="text" id="lat", name="lat" required>
-    <input type="text" id="long", name="long" required>
+    <input type="text" id="lat", name="lat" required placeholder="Latitude">
+    <input type="text" id="long", name="long" required placeholder="Longitude">
     <button type="submit">Submit</button>
   </form>
   
