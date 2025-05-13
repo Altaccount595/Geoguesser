@@ -23,9 +23,8 @@ def address_lat():
 		print("Geocoding Error", data['status'])
 
 	return [lat, lng]
-def image():
-	loc = getRandLoc()
-	url = f'https://maps.googleapis.com/maps/api/streetview?size=600x300&location={loc[0]},{loc[1]}&key={getKey()}'
+def image(lat,long,heading=0, fov=90):
+	url = f'https://maps.googleapis.com/maps/api/streetview?size=600x300&location={lat},{long}&heading={heading}&fov={fov}&key={getKey()}'
 	print(url)
 	#meta_url= "https://maps.googleapis.com/maps/api/streetview/metadata"
 	#params={
@@ -44,7 +43,10 @@ def image():
 		img = Image.open('streetview_image.jpg')
 		img.show()
 	else:
-		image()
+		location = getRandLoc()
+		lat = location[0]
+		long = location[1]
+		image(location[0], location[1])
 
 def getKey():
 	try:
@@ -53,5 +55,7 @@ def getKey():
 	except:
 		print('error')
 	return key
-
-image()
+location = getRandLoc()
+lat = location[0]
+long = location[1]
+image(lat, long)
