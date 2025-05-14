@@ -102,6 +102,28 @@ def haversine(lat1, lon1, lat2, lon2):
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
     return RADIUS * c
 
+MAX_DISTANCE = 120 # km from bronx to staten island
+POINT_CAP = 5000
+
+@app.route("/result", methods=["POST"])
+def result():
+    if "username" not in session:
+        return redirect(url_for("auth"))
+
+    # form field for lat and lon
+    lat_str, lon_str = request.form["input"].split(",")
+    guess_lat, guess_lon = float(lat_str), float(lon_str)
+
+    tgt = session["location"] #distance from target location
+    km  = haversine(guess_lat, guess_lon, tgt["lat"], tgt["long"])
+
+    # 5000 · e^(‑10·d/MaxD)
+    score = round(POINT_CAP * math.exp(-10 * (km / MAX_DISTANCE)))
+
+    #db.add_score(session["username"], region="nyc", points=score, distance=km)
+
+    return redirect(url_for("home"))
+
 if __name__ == "__main__":
     app.debug = True
     app.run()
