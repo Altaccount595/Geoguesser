@@ -15,29 +15,50 @@ db.create_db()
 def home():
     if "username" not in session:
         return redirect(url_for("auth"))
-    location = getRandLoc()
-    image(location[0], location[1])
-    session['location'] = {
-        'lat' : location[0],
-        'long' : location[1]
-    }
+    guessed = False
+    session.modified=True
+    if ('location' in session):
+        print(session['location']['new'])
+    if ('location' not in session) or (session['location']['new']):
+        print(2025)
+        location = getRandLoc()
+        info = image(location[0], location[1])
+        session['location'] = {
+            'lat' : info[0],
+            'long' : info[1],
+            'heading' : info[2],
+            'fov' : info[3],
+            'new' : True
+        }
+        session.modified = True
     if request.method  == 'POST':
-        score = check_guess()
-        return render_template("home.html", username=session["username"], img = 'streetview_image.jpg')
-    return render_template("home.html", username=session["username"], img = 'streetview_image.jpg')
-
+        if 'input' in request.form:
+            dist = check_guess()
+            guessed = True
+            session['location']['new'] = True
+            return render_template("home.html", username=session["username"], img = 'streetview_image.jpg', guessed = guessed, dist = dist)
+        elif 'left' in request.form:
+            location = session['location']
+            location['heading'] = (location['heading'] + 270) % 360
+            location['new'] = False
+            session['location'] =  location
+            image(session['location']['lat'], session['location']['long'], session['location']['heading'])
+        elif 'right' in request.form:
+            session['location']['heading'] = (session['location']['heading'] + 90) % 360
+            session['location']['new'] = False
+            session.modified = True
+            image(session['location']['lat'], session['location']['long'], session['location']['heading'])
+    return render_template("home.html", username=session["username"], img = 'streetview_image.jpg', guessed = guessed)
 def check_guess():
-    lat = float(request.form.get('lat'))
-    long = float(request.form.get('long'))
+    loc = (request.form.get('input'))
+    split = loc.split(", ")
+    lat = float(split[0])
+    long = float(split[1])
     guess =  [lat, long]
-    print(lat)
+    #print(lat)
     answer= [session['location']['lat'], session['location']['long']]
-    check = (answer == guess)
-    if check:
-        score = 1
-    else:
-        score = 0
-    return score
+    dist = haversine(guess[0], guess[1], answer[0], answer[1])
+    return dist
 
 @app.route('/auth', methods=["GET", "POST"])
 def auth():

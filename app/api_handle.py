@@ -47,6 +47,7 @@ def image(lat,long,heading=0, fov=90):
 		lat = location[0]
 		long = location[1]
 		image(location[0], location[1])
+	return [lat, long, heading, fov]
 
 def getKey():
 	try:

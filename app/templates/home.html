@@ -5,20 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Geoguessr</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
-  <link rel="stylesheet" href="css/bruh.css">
+  <link rel="stylesheet" href="../static/css/bruh.css">
 </head>
 <body>
   <nav class="navbar">
 
   </nav>
+  <p><a href="{{ url_for('logout') }}">Log out</a></p>
   <h2>HELLO {{ username }}!</h2>
+  {% if guessed %}
+    <p>You were {{dist}} kilometers away from the correct location!</p>
+  {% endif %}
   <!--change this to however we get the image from-->
   <img src="{{url_for('static', filename=img) }}" alt="my img">
-
+  
+  <form method="POST">
+    <button type="submit" name="left" value="left">&larr; Left</button>
+    <button type="submit" name="right" value="right">Right &rarr;</button>
+  </form>
+  
   <div id="map"></div>
   <p id="coords">Click on the map to get latitude and longitude.</p>
 
-  <form action="{{url_for('result')}}" method="POST">
+  <form method="POST">
       <input id="input" name="input" value="{{lat, lon}}" required readonly="readonly">
       <button type="submit">Submit Answer</button>
   </form>
@@ -45,22 +54,17 @@
           lon = e.latlng.lng.toFixed(4);
           console.log("these are the coords:" + lat + lon)
 
-          const textBox = document.getElementById("input");
           textBox.value = lat + ", " + lon;
 
       });
   </script>
-  <p><a href="{{ url_for('logout') }}">Log out</a></p>
   
 
 </body>
 </html>
        
-<body>
     <h1> Welcome to DevoGuessr! </h1>
     
 
 
 
-</body>
-</html>
