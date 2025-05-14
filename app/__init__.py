@@ -11,20 +11,19 @@ app.secret_key = os.urandom(32)
 
 db.create_db()
 
-@app.route("/", methods = ['GET', 'POST'])
+@app.route("/", methods = ['GET'])
 def home():
     if "username" not in session:
         return redirect(url_for("auth"))
-    location = getRandLoc()
-    image(location[0], location[1])
-    session['location'] = {
-        'lat' : location[0],
-        'long' : location[1]
-    }
-    if request.method  == 'POST':
-        score = check_guess()
-        return render_template("home.html", username=session["username"], img = 'streetview_image.jpg')
-    return render_template("home.html", username=session["username"], img = 'streetview_image.jpg')
+    lat, lon = getRandLoc()
+    image(lat, lon)
+    session["location"] = {"lat": lat, "long": lon}
+
+    return render_template(
+        "home.html",
+        username=session["username"],
+        img="streetview_image.jpg"
+    )
 
 def check_guess():
     lat = float(request.form.get('lat'))
@@ -80,6 +79,28 @@ def haversine(lat1, lon1, lat2, lon2):
     a = math.sin(dLat / 2) * math.sin(dLat / 2) + math.cos(lat1) * math.cos(lat2) * math.sin(dLon / 2) * math.sin(dLon / 2)
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
     return RADIUS * c
+
+MAX_DISTANCE = 120 # km from bronx to staten island
+POINT_CAP = 5000
+
+@app.route("/result", methods=["POST"])
+def result():
+    if "username" not in session:
+        return redirect(url_for("auth"))
+
+    # form field for lat and lon
+    lat_str, lon_str = request.form["input"].split(",")
+    guess_lat, guess_lon = float(lat_str), float(lon_str)
+
+    tgt = session["location"] #distance from target location
+    km  = haversine(guess_lat, guess_lon, tgt["lat"], tgt["long"])
+
+    # 5000 · e^(‑10·d/MaxD)
+    score = round(POINT_CAP * math.exp(-10 * (km / MAX_DISTANCE)))
+
+    #db.add_score(session["username"], region="nyc", points=score, distance=km)
+
+    return redirect(url_for("home"))
 
 if __name__ == "__main__":
     app.debug = True
