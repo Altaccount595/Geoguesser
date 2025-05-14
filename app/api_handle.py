@@ -39,10 +39,7 @@ def image(lat,long,heading=0, fov=90):
 		print("Image successfully downloaded")
 	else:
 		print(f"Error: {response.status_code}")
-	if (not images_are_equal('static/bad.jpg', 'static/streetview_image.jpg')):
-		img = Image.open('static/streetview_image.jpg')
-		img.show()
-	else:
+	if (images_are_equal('static/bad.jpg', 'static/streetview_image.jpg')):
 		location = getRandLoc()
 		lat = location[0]
 		long = location[1]
