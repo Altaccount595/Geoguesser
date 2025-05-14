@@ -50,9 +50,10 @@ def image(lat,long,heading=0, fov=90):
 	return [lat, long, heading, fov]
 
 def getKey():
-	try:
-		with open('keys/streetview.txt', 'r') as file:
-			key = file.read()
-	except:
-		print('error')
-	return key
+    try:
+        with open('keys/streetview.txt', 'r') as file:
+            key = file.read()
+    except:
+        print('error')
+        return
+    return key
