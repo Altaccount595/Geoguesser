@@ -34,9 +34,16 @@ def home():
     if request.method  == 'POST':
         if 'input' in request.form:
             dist = check_guess()
+            points = round(POINT_CAP * math.exp(-10 * (dist / MAX_DISTANCE)))
+
+            if 'history' not in session:          
+                session['history'] = []
+            session['history'].append((round(dist, 2), points))
+            session.modified = True
+            
             guessed = True
             session['location']['new'] = True
-            return render_template("home.html", username=session["username"], img = 'streetview_image.jpg', guessed = guessed, dist = dist)
+            return render_template("home.html", username=session["username"], img = 'streetview_image.jpg', guessed = guessed, dist=round(dist, 2), points=points, history=session['history'])
         elif 'left' in request.form:
             location = session['location']
             location['heading'] = (location['heading'] + 270) % 360

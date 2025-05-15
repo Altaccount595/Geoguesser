@@ -58,12 +58,28 @@
 
       });
   </script>
+
+  {% if history %}
+  <h3>Your past guesses</h3>
+    <table>
+      <tr><th>#</th><th>km off</th><th>Points</th></tr>
+      {% for d, pts in history %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ d }}</td>
+        <td>{{ pts }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+  {% endif %}
   
 
 </body>
 </html>
        
     <h1> Welcome to DevoGuessr! </h1>
+
+    
     
 
 
