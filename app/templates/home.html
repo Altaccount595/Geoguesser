@@ -62,7 +62,7 @@
   {% if history %}
   <h3>Your past guesses</h3>
     <table>
-      <tr><th>#</th><th>km off</th><th>Points</th></tr>
+      <tr><th>#</th><th>km off</th><th>points</th></tr>
       {% for d, pts in history %}
       <tr>
         <td>{{ loop.index }}</td>
@@ -71,6 +71,21 @@
       </tr>
     {% endfor %}
   </table>
+  {% endif %}
+
+  {% if scores %}
+  <h3>Leaderboard</h3>
+    <table>
+      <tr><th>#</th><th>username</th><th>km off</th><th>points</th></tr>
+      {% for row in scores %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ row.username }}</td>
+        <td>{{ row.distance }}</td>
+        <td>{{ row.points }}</td>
+      </tr>
+      {% endfor %}
+    </table>
   {% endif %}
   
 

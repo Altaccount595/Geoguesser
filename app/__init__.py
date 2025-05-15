@@ -17,6 +17,7 @@ def home():
         return redirect(url_for("auth"))
     guessed = False
     session.modified=True
+    scores = db.top_scores()
     if ('location' in session):
         print(session['location']['new'])
     if ('location' not in session) or (session['location']['new']):
@@ -35,7 +36,8 @@ def home():
         if 'input' in request.form:
             dist = check_guess()
             points = round(POINT_CAP * math.exp(-10 * (dist / MAX_DISTANCE)))
-
+            db.add_score(session["username"],points=points,distance=round(dist, 2))
+            scores = db.top_scores()
             if 'history' not in session:          
                 session['history'] = []
             session['history'].append((round(dist, 2), points))
@@ -43,7 +45,7 @@ def home():
             
             guessed = True
             session['location']['new'] = True
-            return render_template("home.html", username=session["username"], img = 'streetview_image.jpg', guessed = guessed, dist=round(dist, 2), points=points, history=session['history'])
+            return render_template("home.html", username=session["username"], img = 'streetview_image.jpg', guessed = guessed, dist=round(dist, 2), points=points, history=session['history'],scores=scores)
         elif 'left' in request.form:
             location = session['location']
             location['heading'] = (location['heading'] + 270) % 360
@@ -55,7 +57,7 @@ def home():
             session['location']['new'] = False
             session.modified = True
             image(session['location']['lat'], session['location']['long'], session['location']['heading'])
-    return render_template("home.html", username=session["username"], img = 'streetview_image.jpg', guessed = guessed)
+    return render_template("home.html", username=session["username"], img = 'streetview_image.jpg', guessed = guessed,scores=scores )
 def check_guess():
     loc = (request.form.get('input'))
     split = loc.split(", ")

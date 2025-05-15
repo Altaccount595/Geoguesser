@@ -19,6 +19,7 @@ def create_db():
     conn = get_db_connection()
     cur = conn.cursor()
     cur.executescript("""
+        DROP TABLE IF EXISTS scores;
         DROP TABLE IF EXISTS address;
         CREATE TABLE IF NOT EXISTS users (
             user_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -81,7 +82,7 @@ def check_user(username, password):
     return row and check_password_hash(row["password_hash"], password)
 
 # adds users scores
-def add_score(username, region, points, distance, mode="untimed"):
+def add_score(username, points, distance, mode="untimed",  region="nyc"):
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute("SELECT user_id FROM users WHERE username = ?", (username,))
