@@ -32,3 +32,6 @@ alexL -- 2025-05-12 21:30
 alexL -- 2025-05-13 23:45
 * added result route for scoring 
 * updated requirements
+
+alexL -- 2025-05-14 21:30
+* added leaderboard and user guess history
