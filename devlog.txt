@@ -39,3 +39,6 @@ alexL -- 2025-05-14 21:30
 tawabB -- 2025-05-15 21:24
 * fixed an error where submitting an answer would bring up an image
   that would get replaced when the user clicked the left or right arrows
+
+alexL -- 2025-05-16 23:20
+* added interactive street view (still waiting on djl apikey)
