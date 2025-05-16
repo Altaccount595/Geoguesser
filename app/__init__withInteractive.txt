@@ -2,7 +2,7 @@ from flask import Flask, render_template, url_for, session, request, redirect, j
 from db import getRandLoc
 import db
 import os, math
-from api_handle import image
+from api_handle import image, getKey
 RADIUS = 6371.0
 
 app = Flask(__name__)
@@ -33,6 +33,7 @@ def home():
         print("new location")
         session.modified = True
     if request.method  == 'POST':
+        '''
         if 'input' in request.form:
             dist = check_guess()
             points = round(POINT_CAP * math.exp(-10 * (dist / MAX_DISTANCE)))
@@ -55,6 +56,29 @@ def home():
             }
             print("random loc")
             return render_template("home.html", username=session["username"], img = 'streetview_image.jpg', guessed = guessed, dist=round(dist, 2), points=points, history=session['history'],scores=scores)
+        '''
+        if 'input' in request.form:
+            dist = check_guess()
+            points = round(POINT_CAP * math.exp(-10 * (dist / MAX_DISTANCE)))
+            db.add_score(session["username"],points=points,distance=round(dist, 2))
+            scores = db.top_scores()
+            if 'history' not in session:
+                session['history'] = []
+            session['history'].append((round(dist, 2), points))
+            session.modified = True
+
+            guessed = True
+            session['location']['new'] = False
+            location = getRandLoc()
+            info = image(location[0], location[1])
+            session['location'] = {
+                'lat' : info[0],
+                'long' : info[1],
+                'heading' : info[2],
+                'fov' : info[3],
+            }
+            print("random loc")
+            return render_template("home.html",username=session["username"],lat=session['location']['lat'],lon=session['location']['long'],map_key=getKey(),guessed=guessed,dist=round(dist, 2),points=points,history=session['history'],scores=scores)
         elif 'left' in request.form:
             location = session['location']
             location['heading'] = (location['heading'] + 270) % 360
@@ -66,7 +90,8 @@ def home():
             print("location is now false")
             session.modified = True
             image(session['location']['lat'], session['location']['long'], session['location']['heading'])
-    return render_template("home.html", username=session["username"], img = 'streetview_image.jpg', guessed = guessed,scores=scores )
+    return render_template("home.html",username=session["username"],lat=session['location']['lat'],lon=session['location']['long'],map_key=getKey(),guessed=guessed,scores=score)
+    
 def check_guess():
     loc = (request.form.get('input'))
     split = loc.split(", ")
