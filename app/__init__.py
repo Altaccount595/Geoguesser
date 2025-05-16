@@ -29,8 +29,9 @@ def home():
             'long' : info[1],
             'heading' : info[2],
             'fov' : info[3],
-            'new' : True
+            'new' : False
         }
+        print("new location")
         session.modified = True
     if request.method  == 'POST':
         if 'input' in request.form:
@@ -38,23 +39,27 @@ def home():
             points = round(POINT_CAP * math.exp(-10 * (dist / MAX_DISTANCE)))
             db.add_score(session["username"],points=points,distance=round(dist, 2))
             scores = db.top_scores()
-            if 'history' not in session:          
+            if 'history' not in session:
                 session['history'] = []
             session['history'].append((round(dist, 2), points))
             session.modified = True
-            
+
             guessed = True
             session['location']['new'] = True
+            location = getRandLoc()
+            print("random loc")
             return render_template("home.html", username=session["username"], img = 'streetview_image.jpg', guessed = guessed, dist=round(dist, 2), points=points, history=session['history'],scores=scores)
         elif 'left' in request.form:
             location = session['location']
             location['heading'] = (location['heading'] + 270) % 360
             location['new'] = False
+            print("location is now false")
             session['location'] =  location
             image(session['location']['lat'], session['location']['long'], session['location']['heading'])
         elif 'right' in request.form:
             session['location']['heading'] = (session['location']['heading'] + 90) % 360
             session['location']['new'] = False
+            print("location is now false")
             session.modified = True
             image(session['location']['lat'], session['location']['long'], session['location']['heading'])
     return render_template("home.html", username=session["username"], img = 'streetview_image.jpg', guessed = guessed,scores=scores )
@@ -94,7 +99,7 @@ def logout():
 
 @app.route("/leaderboard")
 def leaderboard():
-    scores = db.top_scores()       
+    scores = db.top_scores()
     return render_template("leaderboard.html", scores=scores)
 
 def toRadians(degree):

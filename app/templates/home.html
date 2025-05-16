@@ -11,6 +11,7 @@
   <nav class="navbar">
 
   </nav>
+  <h1> Welcome to DevoGuessr! </h1>
   <p><a href="{{ url_for('logout') }}">Log out</a></p>
   <h2>HELLO {{ username }}!</h2>
   {% if guessed %}
@@ -18,12 +19,13 @@
   {% endif %}
   <!--change this to however we get the image from-->
   <img src="{{url_for('static', filename=img) }}" alt="my img">
-  
+
   <form method="POST">
     <button type="submit" name="left" value="left">&larr; Left</button>
     <button type="submit" name="right" value="right">Right &rarr;</button>
+    <!-- this code was created with assistance from AI -->
   </form>
-  
+
   <div id="map"></div>
   <p id="coords">Click on the map to get latitude and longitude.</p>
 
@@ -49,7 +51,7 @@
           .setLatLng(e.latlng)
           .setContent('Your guess')
           .openOn(map);
-          
+
           lat = e.latlng.lat.toFixed(4);
           lon = e.latlng.lng.toFixed(4);
           console.log("these are the coords:" + lat + lon)
@@ -87,15 +89,7 @@
       {% endfor %}
     </table>
   {% endif %}
-  
+
 
 </body>
 </html>
-       
-    <h1> Welcome to DevoGuessr! </h1>
-
-    
-    
-
-
-
