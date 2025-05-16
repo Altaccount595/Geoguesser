@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevoGuessr</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+  <link rel="stylesheet" href="../static/css/bruh.css">
+</head>
+<body>
+  <nav class="navbar">
+
+  </nav>
+  <p><a href="{{ url_for('logout') }}">Log out</a></p>
+  <h1> Welcome to DevoGuessr! </h1>
+  <h2>HELLO {{ username }}!</h2>
+  {% if guessed %}
+    <p>You were {{dist}} kilometers away from the correct location!</p>
+  {% endif %}
+  <!--change this to however we get the image from-->
+  <!--<img src="{{url_for('static', filename=img) }}" alt="my img">-->
+
+  <div id="gmaps"></div>
+
+  <style>
+  #gmaps{
+    width:600px;
+    height:300px;  
+    margin:1rem 0;
+  }
+  </style>
+  
+  <form method="POST">
+    <button type="submit" name="left" value="left">&larr; Left</button>
+    <button type="submit" name="right" value="right">Right &rarr;</button>
+  </form>
+  
+  <div id="map"></div>
+  <p id="coords">Click on the map to get latitude and longitude.</p>
+
+  <form method="POST">
+      <!--<input id="input" name="input" value="{{lat, lon}}" required readonly="readonly">-->
+      <input id="input" name="input" value="" required readonly>
+      <button type="submit">Submit Answer</button>
+  </form>
+
+  <script>
+    window.initMap = function () {
+        const loc = { lat: {{ lat }}, lng: {{ lon }} };
+
+        const gmap = new google.maps.Map(
+            document.getElementById('gmaps'),
+            { center: loc, zoom: 14 }
+        );
+
+        new google.maps.Marker({ position: loc, map: gmap });
+    };
+  </script>
+
+  <script src="https://maps.googleapis.com/maps/api/js?key={{ map_key }}&callback=initMap"></script>
+
+  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+  <script>
+      // Initialize the map
+      var map = L.map('map').setView([40, -95], 4);
+      var lat = 0
+      var lon = 0
+          const textBox = document.getElementById("input");
+          //textBox.value = 0 + ", " + 0;
+      // Add OpenStreetMap layer
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      //attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  }).addTo(map);
+      map.on('click', function(e) {
+          L.popup({closeButton: false})
+          .setLatLng(e.latlng)
+          .setContent('Your guess')
+          .openOn(map);
+          
+          lat = e.latlng.lat.toFixed(4);
+          lon = e.latlng.lng.toFixed(4);
+          console.log("these are the coords:" + lat + lon)
+
+          textBox.value = lat + ", " + lon;
+
+      });
+  </script>
+
+  {% if history %}
+  <h3>Your past guesses</h3>
+    <table>
+      <tr><th>#</th><th>km off</th><th>points</th></tr>
+      {% for d, pts in history %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ d }}</td>
+        <td>{{ pts }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+  {% endif %}
+
+  {% if scores %}
+  <h3>Leaderboard</h3>
+    <table>
+      <tr><th>#</th><th>username</th><th>km off</th><th>points</th></tr>
+      {% for row in scores %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ row.username }}</td>
+        <td>{{ row.distance }}</td>
+        <td>{{ row.points }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  {% endif %}
+  
+
+</body>
+</html>
+       
+
+
+    
+    
+
+
+
