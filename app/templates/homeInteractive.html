@@ -20,6 +20,7 @@
   <!--change this to however we get the image from-->
   <!--<img src="{{url_for('static', filename=img) }}" alt="my img">-->
 
+  <!--styling for panorama streetview-->
   <div id="pano"></div>
 
   <style>
@@ -29,12 +30,12 @@
       margin:1rem 0;
     }
   </style>
-  
+
   <form method="POST">
     <button type="submit" name="left" value="left">&larr; Left</button>
     <button type="submit" name="right" value="right">Right &rarr;</button>
   </form>
-  
+
   <div id="map"></div>
   <p id="coords">Click on the map to get latitude and longitude.</p>
 
@@ -44,8 +45,7 @@
       <button type="submit">Submit Answer</button>
   </form>
 
-  
-
+<!--script to get api for streetview-->
   <script>
     window.initStreetView = function () {
       const loc = { lat: {{ lat }}, lng: {{ lon }} };
@@ -60,7 +60,7 @@
         );
       };
   </script>
-
+<!--calls api-->
   <script src="https://maps.googleapis.com/maps/api/js?key={{ map_key }}&callback=initStreetView"></script>
 
   <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
@@ -80,7 +80,7 @@
           .setLatLng(e.latlng)
           .setContent('Your guess')
           .openOn(map);
-          
+
           lat = e.latlng.lat.toFixed(4);
           lon = e.latlng.lng.toFixed(4);
           console.log("these are the coords:" + lat + lon)
@@ -89,7 +89,7 @@
 
       });
   </script>
-
+<!--shows table for user history with user,distance away,pts -->
   {% if history %}
   <h3>Your past guesses</h3>
     <table>
@@ -104,6 +104,7 @@
   </table>
   {% endif %}
 
+<!--shows table for top scores (changing this later)-->
   {% if scores %}
   <h3>Leaderboard</h3>
     <table>
@@ -118,15 +119,7 @@
       {% endfor %}
     </table>
   {% endif %}
-  
+
 
 </body>
 </html>
-       
-
-
-    
-    
-
-
-
