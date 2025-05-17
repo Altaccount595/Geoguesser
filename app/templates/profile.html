@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Profile/title</title>
+</head>
+<body>
+  <nav>
+    <a href="{{ url_for('home') }}">Home</a> 
+    <a href="{{ url_for('leaderboard', region='nyc') }}">Leaderboard</a>
+    <a href="{{ url_for('profile') }}">Profile</a> 
+    <a href="{{ url_for('logout') }}">Logout</a>
+  </nav>
+
+  <h1>Your game history</h1>
+
+  {% if games %}
+    {% for g in games %}
+      <h3>Game {{ loop.index }} — total {{ g.total }}</h3>
+      <table>
+        <tr><th>Round</th><th>km off</th><th>points</th></tr>
+        {% for i,j in g.scores %}
+          <tr><td>{{ loop.index }}</td><td>{{ i }}</td><td>{{ j }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endfor %}
+  {% else %}
+    <p>No games played yet</p>
+  {% endif %}
+</body>
+</html>

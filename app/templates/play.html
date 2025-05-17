@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Game</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+  <style>
+    #map{height:300px;}      
+</style>
+</head>
+<body>
+
+  <nav>
+    <a href="{{ url_for('home') }}">Home</a> 
+    <a href="{{ url_for('leaderboard', region='nyc') }}">Leaderboard</a> 
+    <a href="{{ url_for('profile') }}">Profile</a> 
+    <a href="{{ url_for('logout') }}">Logout</a>
+  </nav>
+
+    {% if finished %}
+        <h2>game complete!</h2>
+        <p>total: {{ total }} / 25000</p>
+        <a href="{{ url_for('home') }}">home</a>
+        <h3>round breakdown</h3>
+    {% else %}
+        <h2>round {{ round }} / 5</h2>
+    {% endif %}
+
+    {% if guessed %}
+        <p>You were {{ dist }} kilometers away from the correct location!</p>
+    {% endif %}
+
+    <img src="{{ url_for('static', filename=img) }}" alt="my img">
+
+    <form method="POST">
+        <button type="submit" name="left"  value="left">&larr; Left</button>
+        <button type="submit" name="right" value="right">Right &rarr;</button>
+    </form>
+    <!-- this code above was created with assistance from AI (proper citation coming soon)-->
+
+    <div id="map"></div>
+    <p id="coords">Click on the map to get latitude and longitude.</p>
+
+    <form method="POST">
+        <input id="input" name="input" value="0, 0" required readonly>
+        <button type="submit">Submit Answer</button>
+    </form>
+
+    <script>
+        // Initialize the map
+        var map = L.map('map').setView([40, -95], 4);
+        var lat = 0
+        var lon = 0
+            const textBox = document.getElementById("input");
+            textBox.value = 0 + ", " + 0;
+        // Add OpenStreetMap layer
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        //attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+        map.on('click', function(e) {
+            L.popup({closeButton: false})
+            .setLatLng(e.latlng)
+            .setContent('Your guess')
+            .openOn(map);
+  
+            lat = e.latlng.lat.toFixed(4);
+            lon = e.latlng.lng.toFixed(4);
+            console.log("these are the coords:" + lat + lon)
+  
+            textBox.value = lat + ", " + lon;
+  
+        });
+    </script>
+    
+{% if history %}
+<h3>Your past guesses</h3>
+  <table>
+    <tr><th>#</th><th>km off</th><th>points</th></tr>
+    {% for d, pts in history %}
+    <tr>
+      <td>{{ loop.index }}</td>
+      <td>{{ d }}</td>
+      <td>{{ pts }}</td>
+    </tr>
+  {% endfor %}
+</table>
+{% endif %}
+
+</body>
+</html>

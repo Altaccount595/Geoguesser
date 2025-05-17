@@ -8,88 +8,19 @@
   <link rel="stylesheet" href="../static/css/bruh.css">
 </head>
 <body>
-  <nav class="navbar">
-
+  <nav class>
+    <a href="{{ url_for('home') }}">Home</a> 
+    <a href="{{ url_for('leaderboard', region='nyc') }}">Leaderboard</a> 
+    <a href="{{ url_for('profile') }}">Profile</a> 
+    <a href="{{ url_for('logout') }}">Logout</a>
   </nav>
-  <h1> Welcome to DevoGuessr! </h1>
-  <p><a href="{{ url_for('logout') }}">Log out</a></p>
-  <h2>HELLO {{ username }}!</h2>
-  {% if guessed %}
-    <p>You were {{dist}} kilometers away from the correct location!</p>
-  {% endif %}
-  <!--change this to however we get the image from-->
-  <img src="{{url_for('static', filename=img) }}" alt="my img">
-
-  <form method="POST">
-    <button type="submit" name="left" value="left">&larr; Left</button>
-    <button type="submit" name="right" value="right">Right &rarr;</button>
-    <!-- this code was created with assistance from AI -->
-  </form>
-
-  <div id="map"></div>
-  <p id="coords">Click on the map to get latitude and longitude.</p>
-
-  <form method="POST">
-      <input id="input" name="input" value="{{lat, lon}}" required readonly="readonly">
-      <button type="submit">Submit Answer</button>
-  </form>
-
-  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
-  <script>
-      // Initialize the map
-      var map = L.map('map').setView([40, -95], 4);
-      var lat = 0
-      var lon = 0
-          const textBox = document.getElementById("input");
-          textBox.value = 0 + ", " + 0;
-      // Add OpenStreetMap layer
-      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      //attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-  }).addTo(map);
-      map.on('click', function(e) {
-          L.popup({closeButton: false})
-          .setLatLng(e.latlng)
-          .setContent('Your guess')
-          .openOn(map);
-
-          lat = e.latlng.lat.toFixed(4);
-          lon = e.latlng.lng.toFixed(4);
-          console.log("these are the coords:" + lat + lon)
-
-          textBox.value = lat + ", " + lon;
-
-      });
-  </script>
-
-  {% if history %}
-  <h3>Your past guesses</h3>
-    <table>
-      <tr><th>#</th><th>km off</th><th>points</th></tr>
-      {% for d, pts in history %}
-      <tr>
-        <td>{{ loop.index }}</td>
-        <td>{{ d }}</td>
-        <td>{{ pts }}</td>
-      </tr>
-    {% endfor %}
-  </table>
-  {% endif %}
-
-  {% if scores %}
-  <h3>Leaderboard</h3>
-    <table>
-      <tr><th>#</th><th>username</th><th>km off</th><th>points</th></tr>
-      {% for row in scores %}
-      <tr>
-        <td>{{ loop.index }}</td>
-        <td>{{ row.username }}</td>
-        <td>{{ row.distance }}</td>
-        <td>{{ row.points }}</td>
-      </tr>
-      {% endfor %}
-    </table>
-  {% endif %}
-
+  <h1> Welcome to DevoGuessr {{ username }}! </h1>
+  <h2>Select a game mode</h2>
+  
+  <a href="{{ url_for('play', region='nyc') }}">
+    <img src="{{ url_for('static', filename='img/nyc.jpg') }}" alt="New York City" width="320">
+    <p>New York City</p>
+  </a>
 
 </body>
 </html>
