@@ -42,3 +42,10 @@ tawabB -- 2025-05-15 21:24
 
 alexL -- 2025-05-16 23:20
 * added interactive street view (still waiting on djl apikey)
+
+alexL -- 2025-05-17 16:40
+* added play.html, leaderboard.html, profile.html to make the site cleaner instead of just having game served onto home, which caused multiple errors when refreshing home
+* updated home.html just to show the game regions 
+* updated leaderboard to show the top 30 (and from each game)
+* made it so that 5 submissions equals one game
+* cleaned up init and rerouted everything to fit new templates 
