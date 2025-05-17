@@ -1,9 +1,11 @@
 from flask import Flask, render_template, url_for, session, request, redirect, jsonify, flash
-from db import getRandLoc
-import db
-import os, math
+from db import getRandLoc, add_score, top_scores
+import db, os, math
 from api_handle import image
+
 RADIUS = 6371.0
+MAX_DISTANCE = 120 # km from bronx to staten island
+POINT_CAP = 5000
 
 app = Flask(__name__)
 
@@ -11,6 +13,42 @@ app.secret_key = os.urandom(32)
 
 db.create_db()
 
+# helper functions
+
+def toRadians(degree):
+    return degree *(math.pi / 180.0)
+
+def haversine(lat1, lon1, lat2, lon2):
+    lat1 = toRadians(lat1)
+    lon1 = toRadians(lon1)
+    lat2 = toRadians(lat2)
+    lon2 = toRadians(lon2)
+    dLat = lat2 - lat1
+    dLon = lon2 - lon1
+    a = math.sin(dLat / 2) * math.sin(dLat / 2) + math.cos(lat1) * math.cos(lat2) * math.sin(dLon / 2) * math.sin(dLon / 2)
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    return RADIUS * c
+
+def check_guess():
+    loc = (request.form.get('input'))
+    split = loc.split(", ")
+    lat = float(split[0])
+    long = float(split[1])
+    guess =  [lat, long]
+    #print(lat)
+    answer= [session['location']['lat'], session['location']['long']]
+    dist = haversine(guess[0], guess[1], answer[0], answer[1])
+    return dist
+
+# home route
+
+@app.route("/")
+def home():
+    if "username" not in session:
+        return redirect(url_for("auth"))
+    return render_template("home.html", username=session["username"])
+
+'''
 @app.route("/", methods = ['GET', 'POST'])
 def home():
     if "username" not in session:
@@ -67,17 +105,69 @@ def home():
             session.modified = True
             image(session['location']['lat'], session['location']['long'], session['location']['heading'])
     return render_template("home.html", username=session["username"], img = 'streetview_image.jpg', guessed = guessed,scores=scores )
-def check_guess():
-    loc = (request.form.get('input'))
-    split = loc.split(", ")
-    lat = float(split[0])
-    long = float(split[1])
-    guess =  [lat, long]
-    #print(lat)
-    answer= [session['location']['lat'], session['location']['long']]
-    dist = haversine(guess[0], guess[1], answer[0], answer[1])
-    return dist
+'''
 
+#play route
+
+@app.route("/play/<region>", methods=["GET", "POST"])
+def play(region):
+    if "username" not in session:
+        return redirect(url_for("auth"))
+
+    if "round" not in session:
+        session.update({"region": region,"round": 1,"history": []})
+        lat,lon = getRandLoc()
+        info = image(lat, lon)          
+        session["location"] = {"lat": info[0], "long": info[1], "heading":info[2]}
+        session.modified = True
+
+    if request.method == "POST":
+        if "left" in request.form:
+            session["location"]["heading"] = (session["location"]["heading"] + 270) % 360
+            image(session["location"]["lat"],session["location"]["long"],session["location"]["heading"])
+            session.modified = True
+        elif "right" in request.form:
+            session["location"]["heading"] = (session["location"]["heading"] + 90) % 360
+            image(session["location"]["lat"],session["location"]["long"],session["location"]["heading"])
+            session.modified = True
+        elif "input" in request.form:
+            dist = check_guess()
+            pts = round(POINT_CAP * math.exp(-10 * (dist / MAX_DISTANCE)))
+            session["history"].append((round(dist, 2), pts))
+
+            if session["round"] >= 5:
+                total = sum(p for _, p in session["history"])
+                add_score(session["username"], points=total,distance=sum(d for d, _ in session["history"]),region=region)
+                session.setdefault("games", []).append({"scores": session["history"][:],"total": total})
+                session.pop("round")
+                session.pop("location")
+                hist  = session.pop("history")
+                return render_template("play.html",finished=True,history=hist,total=total,img='streetview_image.jpg')
+
+            session["round"] += 1
+            lat,lon = getRandLoc()
+            info = image(lat, lon)
+            session["location"] = {"lat": info[0], "long": info[1], "heading": info[2]}
+            session.modified = True
+
+    return render_template("play.html",finished=False,history=session.get("history", []),total=sum(p for _, p in session.get("history", [])),img='streetview_image.jpg',round=session.get("round", 1))
+
+#leaderboard route
+@app.route("/leaderboard")
+@app.route("/leaderboard/<region>") 
+def leaderboard(region="nyc"):
+    scores = db.top_scores(region)
+    return render_template("leaderboard.html", scores=scores, region=region)
+
+#profile route
+
+@app.route("/profile")
+def profile():
+    if "username" not in session:
+        return redirect(url_for("auth"))
+    return render_template("profile.html", games=session.get("games", []))
+
+# auth  and logout routes
 @app.route('/auth', methods=["GET", "POST"])
 def auth():
     if request.method == "POST":
@@ -100,47 +190,6 @@ def auth():
 def logout():
     session.pop('username', None)
     return redirect(url_for('auth'))
-
-@app.route("/leaderboard")
-def leaderboard():
-    scores = db.top_scores()
-    return render_template("leaderboard.html", scores=scores)
-
-def toRadians(degree):
-    return degree *(math.pi / 180.0)
-
-def haversine(lat1, lon1, lat2, lon2):
-    lat1 = toRadians(lat1)
-    lon1 = toRadians(lon1)
-    lat2 = toRadians(lat2)
-    lon2 = toRadians(lon2)
-    dLat = lat2 - lat1
-    dLon = lon2 - lon1
-    a = math.sin(dLat / 2) * math.sin(dLat / 2) + math.cos(lat1) * math.cos(lat2) * math.sin(dLon / 2) * math.sin(dLon / 2)
-    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
-    return RADIUS * c
-
-MAX_DISTANCE = 120 # km from bronx to staten island
-POINT_CAP = 5000
-
-@app.route("/result", methods=["POST"])
-def result():
-    if "username" not in session:
-        return redirect(url_for("auth"))
-
-    # form field for lat and lon
-    lat_str, lon_str = request.form["input"].split(",")
-    guess_lat, guess_lon = float(lat_str), float(lon_str)
-
-    tgt = session["location"] #distance from target location
-    km  = haversine(guess_lat, guess_lon, tgt["lat"], tgt["long"])
-
-    # 5000 · e^(‑10·d/MaxD)
-    score = round(POINT_CAP * math.exp(-10 * (km / MAX_DISTANCE)))
-
-    #db.add_score(session["username"], region="nyc", points=score, distance=km)
-
-    return redirect(url_for("home"))
 
 if __name__ == "__main__":
     app.debug = True

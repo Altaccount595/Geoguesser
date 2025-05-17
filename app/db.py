@@ -170,16 +170,18 @@ def getRandAddress():
 '''
 
 #gets top scores to serve to leaderboard
-def top_scores():
+def top_scores(region="nyc"):
     conn = get_db_connection()
     cur  = conn.cursor()
 
     cur.execute("""
-        SELECT u.username, s.region, s.points, s.distance
+        SELECT u.username, s.points, s.distance
         FROM scores AS s
         JOIN users AS u ON u.user_id = s.user_id
-        ORDER BY s.points DESC, s.distance ASC;
-    """)
+        WHERE s.region = ?
+        ORDER BY s.points DESC, s.distance ASC
+        LIMIT 30;
+    """, (region,))
 
     rows = cur.fetchall()
     conn.close()
