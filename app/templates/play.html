@@ -6,15 +6,15 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css">
   <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
   <style>
-    #map{height:300px;}      
+    #map{height:300px;}
 </style>
 </head>
 <body>
 
   <nav>
-    <a href="{{ url_for('home') }}">Home</a> 
-    <a href="{{ url_for('leaderboard', region='nyc') }}">Leaderboard</a> 
-    <a href="{{ url_for('profile') }}">Profile</a> 
+    <a href="{{ url_for('home') }}">Home</a>
+    <a href="{{ url_for('leaderboard', region='nyc') }}">Leaderboard</a>
+    <a href="{{ url_for('profile') }}">Profile</a>
     <a href="{{ url_for('logout') }}">Logout</a>
   </nav>
 
@@ -47,6 +47,24 @@
         <button type="submit">Submit Answer</button>
     </form>
 
+    <!--script to get api for streetview-->
+    <!--<script>
+      window.initStreetView = function () {
+        const loc = { lat: {{ lat }}, lng: {{ lon }} };
+
+        new google.maps.StreetViewPanorama(
+          document.getElementById('pano'),
+            {
+              position: loc,
+              pov: { heading: 0, pitch: 0 },
+              zoom: 1
+            }
+          );
+        };
+    </script>
+    calls api-->
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ map_key }}&callback=initStreetView"></script>
+    
     <script>
         // Initialize the map
         var map = L.map('map').setView([40, -95], 4);
@@ -63,16 +81,16 @@
             .setLatLng(e.latlng)
             .setContent('Your guess')
             .openOn(map);
-  
+
             lat = e.latlng.lat.toFixed(4);
             lon = e.latlng.lng.toFixed(4);
             console.log("these are the coords:" + lat + lon)
-  
+
             textBox.value = lat + ", " + lon;
-  
+
         });
     </script>
-    
+
 {% if history %}
 <h3>Your past guesses</h3>
   <table>
