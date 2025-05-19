@@ -9,17 +9,29 @@
 </head>
 <body>
   <nav class>
-    <a href="{{ url_for('home') }}">Home</a> 
-    <a href="{{ url_for('leaderboard', region='nyc') }}">Leaderboard</a> 
-    <a href="{{ url_for('profile') }}">Profile</a> 
+    <a href="{{ url_for('home') }}">Home</a>
+    <a href="{{ url_for('leaderboard', region='nyc') }}">Leaderboard</a>
+    <a href="{{ url_for('profile') }}">Profile</a>
     <a href="{{ url_for('logout') }}">Logout</a>
   </nav>
   <h1> Welcome to DevoGuessr {{ username }}! </h1>
   <h2>Select a game mode</h2>
-  
+
   <a href="{{ url_for('play', region='nyc') }}">
     <img src="{{ url_for('static', filename='img/nyc.jpg') }}" alt="New York City" width="320">
     <p>New York City</p>
+  </a>
+  <a href="{{ url_for('play', region='europe') }}">
+    <img src="{{ url_for('static', filename='img/us.jpg') }}" alt="United States of America" width="320">
+    <p>United States of America</p>
+  </a>
+  <a href="{{ url_for('play', region='europe') }}">
+    <img src="{{ url_for('static', filename='img/europe.jpg') }}" alt="Europe" width="320">
+    <p>Europe</p>
+  </a>
+  <a href="{{ url_for('play', region='global') }}">
+    <img src="{{ url_for('static', filename='img/world.jpg') }}" alt="World" width="320">
+    <p>World</p>
   </a>
 
 </body>
