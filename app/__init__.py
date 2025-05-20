@@ -68,16 +68,6 @@ def play(region):
         session.modified = True
 
     if request.method == "POST":
-        '''
-        if "left" in request.form:
-            session["location"]["heading"] = (session["location"]["heading"] + 270) % 360
-            image(session["location"]["lat"],session["location"]["long"],session["location"]["heading"])
-            session.modified = True
-        elif "right" in request.form:
-            session["location"]["heading"] = (session["location"]["heading"] + 90) % 360
-            image(session["location"]["lat"],session["location"]["long"],session["location"]["heading"])
-            session.modified = True
-        '''
         if "input" in request.form:
             dist = check_guess()
             pts = round(POINT_CAP * math.exp(-10 * (dist / MAX_DISTANCE)))

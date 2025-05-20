@@ -32,7 +32,7 @@
     {% endif %}
 
     <!--<img src="{{ url_for('static', filename=img) }}" alt="my img">-->
-    <div id="pano" style="width:600px;height:300px;"></div>
+    <div id="pano" style="width:screen.width;height:600px;"></div>
 
     <form method="POST">
         <button type="submit" name="left"  value="left">&larr; Left</button>
@@ -58,14 +58,17 @@
             {
               position: loc,
               pov: { heading: 0, pitch: 0 },
-              zoom: 1
+              zoom: 1,
+              disableDefaultUI: true,
+              showRoadLabels: false
             }
           );
         };
     </script>
-    
+
+    <!--link to api-->
     <script src="https://maps.googleapis.com/maps/api/js?key={{ map_key }}&callback=initStreetView"></script>
-    
+
     <script>
         // Initialize the map
         var map = L.map('map').setView([40, -95], 4);
