@@ -52,4 +52,9 @@ alexL -- 2025-05-17 16:40
 
 alexL -- 2025-05-19 22:30
 * replaced image with interactive street view
-* fixed play refresh error 
+* fixed play refresh error
+
+alexL -- 2025-05-20 10:30
+* added landing page
+* removed redundant code in flask routing
+* fixed streetview ui w/ PMTB
