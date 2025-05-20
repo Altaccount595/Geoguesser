@@ -1,7 +1,7 @@
 from flask import Flask, render_template, url_for, session, request, redirect, jsonify, flash
 from db import getRandLoc, add_score, top_scores
 import db, os, math
-from api_handle import image
+from api_handle import image, getKey
 
 RADIUS = 6371.0
 MAX_DISTANCE = 120 # km from bronx to staten island
@@ -117,11 +117,13 @@ def play(region):
     if "round" not in session:
         session.update({"region": region,"round": 1,"history": []})
         lat,lon = getRandLoc()
-        info = image(lat, lon)          
-        session["location"] = {"lat": info[0], "long": info[1], "heading":info[2]}
+        #info = image(lat, lon)          
+        #session["location"] = {"lat": info[0], "long": info[1], "heading":info[2]}
+        session["location"] = {"lat": lat, "long": lon, "heading": 0}
         session.modified = True
 
     if request.method == "POST":
+        '''
         if "left" in request.form:
             session["location"]["heading"] = (session["location"]["heading"] + 270) % 360
             image(session["location"]["lat"],session["location"]["long"],session["location"]["heading"])
@@ -130,7 +132,8 @@ def play(region):
             session["location"]["heading"] = (session["location"]["heading"] + 90) % 360
             image(session["location"]["lat"],session["location"]["long"],session["location"]["heading"])
             session.modified = True
-        elif "input" in request.form:
+        '''
+        if "input" in request.form:
             dist = check_guess()
             pts = round(POINT_CAP * math.exp(-10 * (dist / MAX_DISTANCE)))
             session["history"].append((round(dist, 2), pts))
@@ -142,15 +145,18 @@ def play(region):
                 session.pop("round")
                 session.pop("location")
                 hist  = session.pop("history")
-                return render_template("play.html",finished=True,history=hist,total=total,img='streetview_image.jpg')
+                return render_template("play.html",finished=True,history=hist,total=total)
 
             session["round"] += 1
             lat,lon = getRandLoc()
-            info = image(lat, lon)
-            session["location"] = {"lat": info[0], "long": info[1], "heading": info[2]}
+            #info = image(lat, lon)
+            #session["location"] = {"lat": info[0], "long": info[1], "heading": info[2]}
+            session["location"] = {"lat": lat, "long": lon, "heading": 0}
             session.modified = True
 
-    return render_template("play.html",finished=False,history=session.get("history", []),total=sum(p for _, p in session.get("history", [])),img='streetview_image.jpg',round=session.get("round", 1))
+            return redirect(url_for("play", region=region))
+
+    return render_template("play.html",finished=False,history=session.get("history", []),total=sum(p for _, p in session.get("history", [])), lat=session["location"]["lat"],lon=session["location"]["long"],map_key=getKey(),round=session.get("round", 1))
 
 #leaderboard route
 @app.route("/leaderboard")

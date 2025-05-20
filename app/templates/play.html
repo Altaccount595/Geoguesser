@@ -31,7 +31,8 @@
         <p>You were {{ dist }} kilometers away from the correct location!</p>
     {% endif %}
 
-    <img src="{{ url_for('static', filename=img) }}" alt="my img">
+    <!--<img src="{{ url_for('static', filename=img) }}" alt="my img">-->
+    <div id="pano" style="width:600px;height:300px;"></div>
 
     <form method="POST">
         <button type="submit" name="left"  value="left">&larr; Left</button>
@@ -48,9 +49,9 @@
     </form>
 
     <!--script to get api for streetview-->
-    <!--<script>
+    <script>
       window.initStreetView = function () {
-        const loc = { lat: {{ lat }}, lng: {{ lon }} };
+        const loc = { lat: {{ lat|float }}, lng: {{ lon|float }} };
 
         new google.maps.StreetViewPanorama(
           document.getElementById('pano'),
@@ -62,7 +63,7 @@
           );
         };
     </script>
-    calls api-->
+    
     <script src="https://maps.googleapis.com/maps/api/js?key={{ map_key }}&callback=initStreetView"></script>
     
     <script>
