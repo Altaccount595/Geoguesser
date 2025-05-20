@@ -30,7 +30,7 @@ alexL -- 2025-05-12 21:30
 * added leaderboard route
 
 alexL -- 2025-05-13 23:45
-* added result route for scoring 
+* added result route for scoring
 * updated requirements
 
 alexL -- 2025-05-14 21:30
@@ -45,7 +45,11 @@ alexL -- 2025-05-16 23:20
 
 alexL -- 2025-05-17 16:40
 * added play.html, leaderboard.html, profile.html to make the site cleaner instead of just having game served onto home, which caused multiple errors when refreshing home
-* updated home.html just to show the game regions 
+* updated home.html just to show the game regions
 * updated leaderboard to show the top 30 (and from each game)
 * made it so that 5 submissions equals one game
-* cleaned up init and rerouted everything to fit new templates 
+* cleaned up init and rerouted everything to fit new templates
+
+alexL -- 2025-05-19 22:30
+* replaced image with interactive street view
+* fixed play refresh error 
