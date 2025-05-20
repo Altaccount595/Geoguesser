@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevoGuessr</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+  <link rel="stylesheet" href="../static/css/bruh.css">
+</head>
+<body>
+  <nav class>
+    <a href="{{ url_for('home') }}">Home</a>
+    <a href="{{ url_for('leaderboard', region='nyc') }}">Leaderboard</a>
+    <a href="{{ url_for('profile') }}">Profile</a>
+    <a href="{{ url_for('logout') }}">Logout</a>
+  </nav>
+  <h1> Welcome to DevoGuessr {{ username }}! </h1>
+  <h2>Login to play games.</h2>
+
+</body>
+</html>

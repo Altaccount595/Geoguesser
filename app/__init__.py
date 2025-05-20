@@ -42,70 +42,15 @@ def check_guess():
 
 # home route
 
+@app.route("/landing")
+def landing():
+    return render_template("landing.html")
+
 @app.route("/")
 def home():
     if "username" not in session:
         return redirect(url_for("auth"))
     return render_template("home.html", username=session["username"])
-
-'''
-@app.route("/", methods = ['GET', 'POST'])
-def home():
-    if "username" not in session:
-        return redirect(url_for("auth"))
-    guessed = False
-    session.modified=True
-    scores = db.top_scores()
-    if ('location' in session):
-        print(session['location'])
-    if ('location' not in session):
-        print(2025)
-        location = getRandLoc()
-        info = image(location[0], location[1])
-        session['location'] = {
-            'lat' : info[0],
-            'long' : info[1],
-            'heading' : info[2],
-            'fov' : info[3],
-        }
-        print("new location")
-        session.modified = True
-    if request.method  == 'POST':
-        if 'input' in request.form:
-            dist = check_guess()
-            points = round(POINT_CAP * math.exp(-10 * (dist / MAX_DISTANCE)))
-            db.add_score(session["username"],points=points,distance=round(dist, 2))
-            scores = db.top_scores()
-            if 'history' not in session:
-                session['history'] = []
-            session['history'].append((round(dist, 2), points))
-            session.modified = True
-
-            guessed = True
-            session['location']['new'] = False
-            location = getRandLoc()
-            info = image(location[0], location[1])
-            session['location'] = {
-                'lat' : info[0],
-                'long' : info[1],
-                'heading' : info[2],
-                'fov' : info[3],
-            }
-            print("random loc")
-            return render_template("home.html", username=session["username"], img = 'streetview_image.jpg', guessed = guessed, dist=round(dist, 2), points=points, history=session['history'],scores=scores)
-        elif 'left' in request.form:
-            location = session['location']
-            location['heading'] = (location['heading'] + 270) % 360
-            print("location is now false")
-            session['location'] =  location
-            image(session['location']['lat'], session['location']['long'], session['location']['heading'])
-        elif 'right' in request.form:
-            session['location']['heading'] = (session['location']['heading'] + 90) % 360
-            print("location is now false")
-            session.modified = True
-            image(session['location']['lat'], session['location']['long'], session['location']['heading'])
-    return render_template("home.html", username=session["username"], img = 'streetview_image.jpg', guessed = guessed,scores=scores )
-'''
 
 #play route
 
@@ -117,7 +62,7 @@ def play(region):
     if "round" not in session:
         session.update({"region": region,"round": 1,"history": []})
         lat,lon = getRandLoc()
-        #info = image(lat, lon)          
+        #info = image(lat, lon)
         #session["location"] = {"lat": info[0], "long": info[1], "heading":info[2]}
         session["location"] = {"lat": lat, "long": lon, "heading": 0}
         session.modified = True
@@ -160,7 +105,7 @@ def play(region):
 
 #leaderboard route
 @app.route("/leaderboard")
-@app.route("/leaderboard/<region>") 
+@app.route("/leaderboard/<region>")
 def leaderboard(region="nyc"):
     scores = db.top_scores(region)
     return render_template("leaderboard.html", scores=scores, region=region)
