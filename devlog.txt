@@ -58,3 +58,8 @@ alexL -- 2025-05-20 10:30
 * added landing page
 * removed redundant code in flask routing
 * fixed streetview ui w/ PMTB
+
+alexL -- 2025-05-20 21:50
+* reformatted play so that streetview takes up whole page like GeoGusser and minimap to guess is in bottom right corner w/ submit guess button
+* added map to show actual guess vs your guess after each round
+* added results route so it would be separate from play
