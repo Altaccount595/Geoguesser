@@ -25,7 +25,12 @@ def haversine(lat1, lon1, lat2, lon2):
     lon2 = toRadians(lon2)
     dLat = lat2 - lat1
     dLon = lon2 - lon1
-    a = math.sin(dLat / 2) * math.sin(dLat / 2) + math.cos(lat1) * math.cos(lat2) * math.sin(dLon / 2) * math.sin(dLon / 2)
+    a = (math.sin(dLat / 2)
+         * math.sin(dLat / 2)
+         + math.cos(lat1)
+         * math.cos(lat2)
+         * math.sin(dLon / 2)
+         * math.sin(dLon / 2))
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
     return RADIUS * c
 
@@ -56,8 +61,11 @@ def home():
 def results(region):
     if "results" not in session:
         return redirect(url_for("home"))
-    data = session["results"]         
-    return render_template("results.html",finished=True,history=data["history"],total=data["total"],region=region)
+    data = session["results"]
+    return render_template(
+        "results.html",finished=True,history=data["history"],
+        total=data["total"],region=region
+    )
 
 #play route
 
@@ -82,14 +90,23 @@ def play(region):
             session["history"].append((round(dist, 2), pts))
             session.modified = True
 
-            return render_template("play.html",finished=False,guessed=True,dist=round(dist,2),guess_lat=guess[0],guess_lon=guess[1],lat=actual[0],lon=actual[1],round=session["round"],history=session["history"],total=sum(p for _,p in session["history"]),map_key=getKey())
+            return render_template(
+                "play.html",finished=False,guessed=True,
+                dist=round(dist,2),guess_lat=guess[0],guess_lon=guess[1],
+                lat=actual[0],lon=actual[1],round=session["round"],
+                history=session["history"],
+                total=sum(p for _,p in session["history"]),map_key=getKey()
+            )
 
         if "next" in request.form:
             session["round"] += 1
 
             if session["round"] > 5:
                 total = sum(p for _, p in session["history"])
-                add_score(session["username"], points=total,distance=sum(d for d, _ in session["history"]),region=region)
+                add_score(
+                    session["username"], points=total,
+                    distance=sum(d for d, _ in session["history"]),region=region
+                )
                 session.setdefault("games", []).append({"scores": session["history"][:],"total":  total })
                 session["results"] = {"history": session["history"], "total": total}
                 session.pop("round")
@@ -102,7 +119,12 @@ def play(region):
 
             return redirect(url_for("play", region=region))
 
-    return render_template("play.html",finished=False,history=session.get("history", []),total=sum(p for _, p in session.get("history", [])), lat=session["location"]["lat"],lon=session["location"]["long"],map_key=getKey(),round=session.get("round", 1))
+    return render_template(
+        "play.html",finished=False,history=session.get("history", []),
+        total=sum(p for _, p in session.get("history", [])),
+        lat=session["location"]["lat"],lon=session["location"]["long"],
+        map_key=getKey(),round=session.get("round", 1)
+    )
 
 #leaderboard route
 @app.route("/leaderboard")
