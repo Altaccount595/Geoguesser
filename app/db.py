@@ -91,7 +91,10 @@ def add_score(username, points, distance, mode="untimed",  region="nyc"):
         conn.close()
         return False
     user_id = id["user_id"]
-    cur.execute("INSERT INTO scores (user_id, region, mode, points, distance) VALUES (?, ?, ?, ?, ?)", (user_id, region, mode, points, distance,))
+    cur.execute(
+        "INSERT INTO scores (user_id, region, mode, points, distance) VALUES (?, ?, ?, ?, ?)",
+        (user_id, region, mode, points, distance,)
+    )
     conn.commit()
     conn.close()
     return True
