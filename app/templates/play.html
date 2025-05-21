@@ -14,8 +14,8 @@
     }
     #pano {
       position: fixed;
-      inset: 0; 
-      height: 100%; 
+      inset: 0;
+      height: 100%;
     }
     #mini {
       position: fixed;
@@ -23,22 +23,29 @@
       right: 20px;
       width: 300px;
       height: 200px;
-      z-index: 1000;               
+      z-index: 1000;
+      /*background-color:rgba(0,0,0,0.2);*/
+      transition: all 0.3s ease;
+    }
+    #mini:hover{
+      width: 450px;
+      height: 500px;
+      /*background-color: rgba(0,0,0,0.9);*/
     }
     #resultMap {
       position: fixed;
-      inset: 0;              
-      z-index: 1001;              
+      inset: 0;
+      z-index: 1001;
     }
     nav{position:relative; z-index:1100;}
     #guessBtn{
-      position: absolute;     
+      position: absolute;
       left: 0;
       right: 0;
       bottom: 4px;
-      margin: auto;           
+      margin: auto;
       width: 140px;
-      z-index: 1001;          
+      z-index: 1001;
     }
     .next-btn{
       position: fixed;
@@ -47,7 +54,7 @@
       right: 0;
       margin: auto;
       width: 120px;
-      z-index: 1102;   
+      z-index: 1102;
     }
 </style>
 </head>
@@ -70,7 +77,7 @@
       <input id="input" name="input" value="">
       <input type="hidden" name="next" value="" disabled>
     </form>
-   
+
     {% if not finished %}
     <!--script to get api for streetview-->
     <script>
@@ -116,7 +123,7 @@
             console.log("these are the coords:" + lat + lon)
 
             textBox.value = lat + ", " + lon;
-            guessBtn.hidden = false; 
+            guessBtn.hidden = false;
         });
         guessBtn.onclick=()=>document.getElementById('guessForm').submit();
     </script>
@@ -129,13 +136,13 @@
       //build overlay map
       const res = L.map('resultMap',{zoomControl:false,attributionControl:false});
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(res);
-      
+
       //get players guess g and actual answer a
       const g=[{{ guess_lat }},{{ guess_lon }}],a=[{{ lat }},{{ lon }}];
 
       L.circleMarker(g,{radius:6}).addTo(res);  //blue marker for players guess
       L.circleMarker(a,{radius:6,color:'red',fillColor:'red'}).addTo(res); //red marker for actual location
-      L.polyline([g,a],{dashArray:'6 6'}).addTo(res); //dashed line 
+      L.polyline([g,a],{dashArray:'6 6'}).addTo(res); //dashed line
       res.fitBounds([g,a],{padding:[40,40]}); //fit map bounds
 
       const nextBtn=document.getElementById('nextBtn');
