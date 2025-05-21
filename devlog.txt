@@ -63,3 +63,22 @@ alexL -- 2025-05-20 21:50
 * reformatted play so that streetview takes up whole page like GeoGusser and minimap to guess is in bottom right corner w/ submit guess button
 * added map to show actual guess vs your guess after each round
 * added results route so it would be separate from play
+
+tawabB -- 2025-05-21 10:10
+  Py:
+    -  Which aspects of the style guide were most applicable to your codebase?
+        * Maximum line length of 79 characters, since we have a lot of long return statements,
+          mostly stuff getting pushed to flask with jinja and render_template with variables
+        * Imports of different libraries/modules should be on separate lines, because we have a
+          lot of imports all on the same line in our python files
+        * Documentation Strings throughout the whole repo, because it makes it easier to distinguish
+          what a specific function does or returns at a glance without having to thoroughly analyze
+          & decipher the code itself
+    - Which aspects of the style guide were most useful/appreciated by your Devos?
+
+
+  JS:
+    -  Which aspects of the style guide were most applicable to your codebase?
+        * Output of logs, pretty self-explanatory and similar to documentation strings in usefulness
+        * Comments, specifically those with intention, for the same reasons listed above
+    -  Which aspects of the style guide were most useful/appreciated by your Devos?
