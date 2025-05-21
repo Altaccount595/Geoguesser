@@ -6,7 +6,49 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css">
   <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
   <style>
-    #map{height:300px;}
+    html,
+    body {
+      margin: 0;
+      height: 100%;
+      overflow:hidden;
+    }
+    #pano {
+      position: fixed;
+      inset: 0; 
+      height: 100%; 
+    }
+    #mini {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 300px;
+      height: 200px;
+      z-index: 1000;               
+    }
+    #resultMap {
+      position: fixed;
+      inset: 0;              
+      z-index: 1001;              
+    }
+    nav{position:relative; z-index:1100;}
+    #guessBtn{
+      position: absolute;     
+      left: 0;
+      right: 0;
+      bottom: 4px;
+      margin: auto;           
+      width: 140px;
+      z-index: 1001;          
+    }
+    .next-btn{
+      position: fixed;
+      bottom: 30px;
+      left: 0;
+      right: 0;
+      margin: auto;
+      width: 120px;
+      z-index: 1102;   
+    }
 </style>
 </head>
 <body>
@@ -18,36 +60,18 @@
     <a href="{{ url_for('logout') }}">Logout</a>
   </nav>
 
-    {% if finished %}
-        <h2>game complete!</h2>
-        <p>total: {{ total }} / 25000</p>
-        <a href="{{ url_for('home') }}">home</a>
-        <h3>round breakdown</h3>
-    {% else %}
-        <h2>round {{ round }} / 5</h2>
-    {% endif %}
-
-    {% if guessed %}
-        <p>You were {{ dist }} kilometers away from the correct location!</p>
-    {% endif %}
-
     <!--<img src="{{ url_for('static', filename=img) }}" alt="my img">-->
-    <div id="pano" style="width:screen.width;height:600px;"></div>
+    <div id="pano"></div>
+    <div id="mini">
+      <button id="guessBtn" hidden>Submit Guess?</button>
+    </div>
 
-    <form method="POST">
-        <button type="submit" name="left"  value="left">&larr; Left</button>
-        <button type="submit" name="right" value="right">Right &rarr;</button>
+    <form id="guessForm" method="POST" style="display:none">
+      <input id="input" name="input" value="">
+      <input type="hidden" name="next" value="" disabled>
     </form>
-    <!-- this code above was created with assistance from AI (proper citation coming soon)-->
-
-    <div id="map"></div>
-    <p id="coords">Click on the map to get latitude and longitude.</p>
-
-    <form method="POST">
-        <input id="input" name="input" value="0, 0" required readonly>
-        <button type="submit">Submit Answer</button>
-    </form>
-
+   
+    {% if not finished %}
     <!--script to get api for streetview-->
     <script>
       window.initStreetView = function () {
@@ -68,10 +92,11 @@
 
     <!--link to api-->
     <script src="https://maps.googleapis.com/maps/api/js?key={{ map_key }}&callback=initStreetView"></script>
-
+    {% endif %}
     <script>
         // Initialize the map
-        var map = L.map('map').setView([40, -95], 4);
+        var map = L.map('mini').setView([40, -95], 4);
+        const guessBtn = document.getElementById('guessBtn');
         var lat = 0
         var lon = 0
             const textBox = document.getElementById("input");
@@ -91,23 +116,36 @@
             console.log("these are the coords:" + lat + lon)
 
             textBox.value = lat + ", " + lon;
-
+            guessBtn.hidden = false; 
         });
+        guessBtn.onclick=()=>document.getElementById('guessForm').submit();
     </script>
 
-{% if history %}
-<h3>Your past guesses</h3>
-  <table>
-    <tr><th>#</th><th>km off</th><th>points</th></tr>
-    {% for d, pts in history %}
-    <tr>
-      <td>{{ loop.index }}</td>
-      <td>{{ d }}</td>
-      <td>{{ pts }}</td>
-    </tr>
-  {% endfor %}
-</table>
-{% endif %}
+  {% if guessed %}
+    <div id="resultMap"></div>
+    <button id="nextBtn" class="next-btn" hidden>Next Round</button>
+
+    <script>
+      //build overlay map
+      const res = L.map('resultMap',{zoomControl:false,attributionControl:false});
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(res);
+      
+      //get players guess g and actual answer a
+      const g=[{{ guess_lat }},{{ guess_lon }}],a=[{{ lat }},{{ lon }}];
+
+      L.circleMarker(g,{radius:6}).addTo(res);  //blue marker for players guess
+      L.circleMarker(a,{radius:6,color:'red',fillColor:'red'}).addTo(res); //red marker for actual location
+      L.polyline([g,a],{dashArray:'6 6'}).addTo(res); //dashed line 
+      res.fitBounds([g,a],{padding:[40,40]}); //fit map bounds
+
+      const nextBtn=document.getElementById('nextBtn');
+      nextBtn.hidden=false;
+      nextBtn.onclick=()=>{
+      document.querySelector('input[name="next"]').disabled=false;
+      document.getElementById('guessForm').submit();
+    };
+    </script>
+  {% endif %}
 
 </body>
 </html>

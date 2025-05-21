@@ -52,6 +52,13 @@ def home():
         return redirect(url_for("auth"))
     return render_template("home.html", username=session["username"])
 
+@app.route("/results/<region>")
+def results(region):
+    if "results" not in session:
+        return redirect(url_for("home"))
+    data = session["results"]         
+    return render_template("results.html",finished=True,history=data["history"],total=data["total"],region=region)
+
 #play route
 
 @app.route("/play/<region>", methods=["GET", "POST"])
@@ -62,30 +69,34 @@ def play(region):
     if "round" not in session:
         session.update({"region": region,"round": 1,"history": []})
         lat,lon = getRandLoc()
-        #info = image(lat, lon)
-        #session["location"] = {"lat": info[0], "long": info[1], "heading":info[2]}
         session["location"] = {"lat": lat, "long": lon, "heading": 0}
         session.modified = True
 
     if request.method == "POST":
-        if "input" in request.form:
+        if "input" in request.form and "next" not in request.form:
             dist = check_guess()
             pts = round(POINT_CAP * math.exp(-10 * (dist / MAX_DISTANCE)))
-            session["history"].append((round(dist, 2), pts))
+            guess = list(map(float, request.form["input"].split(", ")))
+            actual = [session["location"]["lat"], session["location"]["long"]]
 
-            if session["round"] >= 5:
+            session["history"].append((round(dist, 2), pts))
+            session.modified = True
+
+            return render_template("play.html",finished=False,guessed=True,dist=round(dist,2),guess_lat=guess[0],guess_lon=guess[1],lat=actual[0],lon=actual[1],round=session["round"],history=session["history"],total=sum(p for _,p in session["history"]),map_key=getKey())
+
+        if "next" in request.form:
+            session["round"] += 1
+
+            if session["round"] > 5:
                 total = sum(p for _, p in session["history"])
                 add_score(session["username"], points=total,distance=sum(d for d, _ in session["history"]),region=region)
-                session.setdefault("games", []).append({"scores": session["history"][:],"total": total})
+                session.setdefault("games", []).append({"scores": session["history"][:],"total":  total })
+                session["results"] = {"history": session["history"], "total": total}
                 session.pop("round")
                 session.pop("location")
-                hist  = session.pop("history")
-                return render_template("play.html",finished=True,history=hist,total=total)
+                return redirect(url_for("results", region=region))
 
-            session["round"] += 1
             lat,lon = getRandLoc()
-            #info = image(lat, lon)
-            #session["location"] = {"lat": info[0], "long": info[1], "heading": info[2]}
             session["location"] = {"lat": lat, "long": lon, "heading": 0}
             session.modified = True
 
