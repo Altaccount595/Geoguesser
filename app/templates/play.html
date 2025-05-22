@@ -62,6 +62,15 @@
       width: 120px;
       z-index: 1102;
     }
+    #timer{ 
+      position:fixed; 
+      top:10px; 
+      right:10px;
+      background:#0009; 
+      color:#fff; 
+      padding:.2rem .7rem; 
+      z-index:1101; 
+    }
 </style>
 </head>
 <body>
@@ -75,6 +84,10 @@
 
     <!--<img src="{{ url_for('static', filename=img) }}" alt="my img">-->
     <div id="pano"></div>
+
+    {% if mode == 'timed' and not guessed %}
+      <div id="timer">{{ remaining_time }}</div>
+    {% endif %}
     
     <div id="mini-container">
     <div id="mini">
@@ -142,6 +155,22 @@
             guessBtn.hidden = false;
         });
         guessBtn.onclick=()=>document.getElementById('guessForm').submit();
+
+        {% if mode == 'timed' and not guessed %}
+          (function(){
+            let remaining = {{ remaining_time }};
+            const box = document.getElementById('timer');
+            const tick = setInterval(()=>{
+              remaining -= 1;
+              if (remaining <= 0){
+                clearInterval(tick);
+                document.getElementById('guessForm').submit();   
+              } else {
+                box.textContent = remaining;
+              }
+            }, 1000);
+          })();
+        {% endif %} 
     </script>
 
   {% if guessed %}

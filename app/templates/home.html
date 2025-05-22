@@ -17,7 +17,8 @@
   <h1> Welcome to DevoGuessr, {{ username }}! </h1>
   <h2>Select a game mode</h2>
 
-  <a href="{{ url_for('play', region='nyc') }}">
+  <h2>Untimed</h2>
+  <a href="{{ url_for('play', mode='untimed', region='nyc') }}">
     <img src="{{ url_for('static', filename='img/nyc.jpg') }}" alt="New York City" width="320">
     <p>New York City</p>
   </a>
@@ -32,6 +33,12 @@
   <a href="{{ url_for('play', region='global') }}">
     <img src="{{ url_for('static', filename='img/world.jpg') }}" alt="World" width="320">
     <p>World</p>
+  </a>
+
+  <h2 style="margin-top:2rem">Timed</h2>
+  <a href="{{ url_for('play', mode='timed', region='nyc') }}">
+    <img src="{{ url_for('static', filename='img/nyc.jpg') }}" alt="New York City" width="320">
+    <p>New York City</p>
   </a>
 
 </body>

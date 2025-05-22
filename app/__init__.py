@@ -1,6 +1,6 @@
 from flask import Flask, render_template, url_for, session, request, redirect, jsonify, flash
 from db import getRandLoc, add_score, top_scores
-import db, os, math
+import db, os, math, time
 from api_handle import image, getKey
 
 RADIUS = 6371.0
@@ -57,28 +57,36 @@ def home():
         return redirect(url_for("auth"))
     return render_template("home.html", username=session["username"])
 
-@app.route("/results/<region>")
-def results(region):
+@app.route("/results/<mode>/<region>")
+def results(mode, region):
     if "results" not in session:
         return redirect(url_for("home"))
     data = session["results"]
     return render_template(
         "results.html",finished=True,history=data["history"],
-        total=data["total"],region=region
+        total=data["total"],region=region, mode=mode
     )
 
 #play route
 
-@app.route("/play/<region>", methods=["GET", "POST"])
-def play(region):
+@app.route("/play/<region>", methods=["GET", "POST"], defaults={"mode": "untimed"})
+@app.route("/play/<mode>/<region>", methods=["GET","POST"])
+def play(mode, region):
     if "username" not in session:
         return redirect(url_for("auth"))
 
     if "round" not in session:
-        session.update({"region": region,"round": 1,"history": []})
         lat,lon = getRandLoc()
-        session["location"] = {"lat": lat, "long": lon, "heading": 0}
+        session.update({"region": region,"mode": mode,"round": 1,"history": [], "location": {"lat": lat, "long": lon, "heading": 0}})
+        if mode == "timed":                     
+            session["expires"] = time.time() + 60
         session.modified = True
+    
+    if session["mode"] == "timed" and time.time() > session.get("expires", 0):
+        session["history"].append((MAX_DISTANCE, 0)) 
+        session["round"] += 1
+        session.modified = True
+        return redirect(url_for("play", mode=mode, region=region))
 
     if request.method == "POST":
         if "input" in request.form and "next" not in request.form:
@@ -95,7 +103,8 @@ def play(region):
                 dist=round(dist,2),guess_lat=guess[0],guess_lon=guess[1],
                 lat=actual[0],lon=actual[1],round=session["round"],
                 history=session["history"],
-                total=sum(p for _,p in session["history"]),map_key=getKey()
+                total=sum(p for _,p in session["history"]),map_key=getKey(),
+                mode=session["mode"]
             )
 
         if "next" in request.form:
@@ -105,25 +114,32 @@ def play(region):
                 total = sum(p for _, p in session["history"])
                 add_score(
                     session["username"], points=total,
-                    distance=sum(d for d, _ in session["history"]),region=region
+                    distance=sum(d for d, _ in session["history"]),mode=session["mode"],region=region
                 )
                 session.setdefault("games", []).append({"scores": session["history"][:],"total":  total })
-                session["results"] = {"history": session["history"], "total": total}
-                session.pop("round")
-                session.pop("location")
-                return redirect(url_for("results", region=region))
+                session["results"] = {"history": session["history"], "total": total, "mode":session["mode"]}
+                for k in ("round","location","history","expires","mode"):
+                    session.pop(k, None)
+                return redirect(url_for("results", mode=mode, region=region))
 
             lat,lon = getRandLoc()
             session["location"] = {"lat": lat, "long": lon, "heading": 0}
+            if session["mode"] == "timed":          
+                session["expires"] = time.time() + 60
             session.modified = True
 
-            return redirect(url_for("play", region=region))
+            return redirect(url_for("play", mode=mode, region=region))
+
+    remaining = None
+    if session["mode"] == "timed":
+        remaining = max(0, int(session["expires"] - time.time()))
 
     return render_template(
         "play.html",finished=False,history=session.get("history", []),
         total=sum(p for _, p in session.get("history", [])),
         lat=session["location"]["lat"],lon=session["location"]["long"],
-        map_key=getKey(),round=session.get("round", 1)
+        map_key=getKey(),round=session.get("round", 1),
+        mode=session["mode"],remaining_time=remaining 
     )
 
 #leaderboard route

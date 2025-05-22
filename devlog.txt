@@ -91,3 +91,6 @@ tawabB -- 2025-05-21 20:24
 
 tawabB -- 2025-05-21 20:48
 * made minimap semi-transparent when mouse is not hovering over it, improving view of streetview
+
+alexL -- 2025-05-21 23:30
+* added timed mode (still in beta)
