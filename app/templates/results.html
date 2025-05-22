@@ -5,7 +5,7 @@
   <title>Results</title>
 </head>
 <body>
-  <h1>game complete – {{ region|upper }}</h1>
+  <h1>game complete – {{ region|upper }} ({{ 'Timed' if mode=='timed' else 'Untimed' }})</h1>
 
   <p>total points: <strong>{{ total }}</strong> / 25000</p>
 
@@ -22,7 +22,7 @@
 </table>
 {% endif %}
     <p>
-    <a href="{{ url_for('play', region=region) }}">Play again</a> 
+    <a href="{{ url_for('play', mode=mode, region=region) }}">Play again</a> 
     <a href="{{ url_for('home') }}">Home</a>
     </p>
 </body>
