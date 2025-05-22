@@ -17,7 +17,7 @@
       inset: 0;
       height: 100%;
     }
-    #mini {
+    #mini-container {
       position: fixed;
       bottom: 20px;
       right: 20px;
@@ -27,9 +27,13 @@
       /*background-color:rgba(0,0,0,0.2);*/
       transition: all 0.3s ease;
     }
-    #mini:hover{
-      width: 450px;
-      height: 500px;
+    #mini {
+      width: 100%;
+      height: 100%;
+    }
+    #mini-container:hover{
+      width: 600px;
+      height: 400px;
       /*background-color: rgba(0,0,0,0.9);*/
     }
     #resultMap {
@@ -69,8 +73,11 @@
 
     <!--<img src="{{ url_for('static', filename=img) }}" alt="my img">-->
     <div id="pano"></div>
+    
+    <div id="mini-container">
     <div id="mini">
       <button id="guessBtn" hidden>Submit Guess?</button>
+    </div>
     </div>
 
     <form id="guessForm" method="POST" style="display:none">
@@ -103,6 +110,7 @@
     <script>
         // Initialize the map
         var map = L.map('mini').setView([40, -95], 4);
+        
         const guessBtn = document.getElementById('guessBtn');
         var lat = 0
         var lon = 0
@@ -112,6 +120,12 @@
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         //attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
+
+        const container = document.getElementById('mini-container');
+            container.addEventListener('transitionend', () => {   //hover stuff (hopefully it owrks??)
+            map.invalidateSize();
+          });
+
         map.on('click', function(e) {
             L.popup({closeButton: false})
             .setLatLng(e.latlng)

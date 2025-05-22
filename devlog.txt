@@ -85,3 +85,6 @@ tawabB -- 2025-05-21 10:10
 
 tawabB -- 2025-05-21 10:40
 * made minimap better (gets bigger upon mouse hover)
+
+tawabB -- 2025-05-21 20:24
+* fixed minimap bug where only a small portion would be loaded when hover-expanded
