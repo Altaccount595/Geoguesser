@@ -77,13 +77,19 @@ def play(mode, region):
 
     if "round" not in session:
         lat,lon = getRandLoc()
-        session.update({"region": region,"mode": mode,"round": 1,"history": [], "location": {"lat": lat, "long": lon, "heading": 0}})
-        if mode == "timed":                     
+        session.update(
+            {
+                "region": region,"mode": mode,
+                "round": 1,"history": [],
+                "location": {"lat": lat, "long": lon, "heading": 0}
+            }
+        )
+        if mode == "timed":
             session["expires"] = time.time() + 60
         session.modified = True
-    
+
     if session["mode"] == "timed" and time.time() > session.get("expires", 0):
-        session["history"].append((MAX_DISTANCE, 0)) 
+        session["history"].append((MAX_DISTANCE, 0))
         session["round"] += 1
         session.modified = True
         return redirect(url_for("play", mode=mode, region=region))
@@ -117,14 +123,18 @@ def play(mode, region):
                     distance=sum(d for d, _ in session["history"]),mode=session["mode"],region=region
                 )
                 session.setdefault("games", []).append({"scores": session["history"][:],"total":  total })
-                session["results"] = {"history": session["history"], "total": total, "mode":session["mode"]}
+                session["results"] = {
+                    "history": session["history"],
+                    "total": total,
+                    "mode":session["mode"]
+                }
                 for k in ("round","location","history","expires","mode"):
                     session.pop(k, None)
                 return redirect(url_for("results", mode=mode, region=region))
 
             lat,lon = getRandLoc()
             session["location"] = {"lat": lat, "long": lon, "heading": 0}
-            if session["mode"] == "timed":          
+            if session["mode"] == "timed":
                 session["expires"] = time.time() + 60
             session.modified = True
 
@@ -139,7 +149,7 @@ def play(mode, region):
         total=sum(p for _, p in session.get("history", [])),
         lat=session["location"]["lat"],lon=session["location"]["long"],
         map_key=getKey(),round=session.get("round", 1),
-        mode=session["mode"],remaining_time=remaining 
+        mode=session["mode"],remaining_time=remaining
     )
 
 #leaderboard route

@@ -12,11 +12,13 @@
       height: 100%;
       overflow:hidden;
     }
+    /*fills screen with streetview*/
     #pano {
       position: fixed;
       inset: 0;
       height: 100%;
     }
+    /*mini map container*/
     #mini-container {
       position: fixed;
       bottom: 20px;
@@ -32,18 +34,21 @@
       width: 100%;
       height: 100%;
     }
+    /*hover effects on mini map*/
     #mini-container:hover{
       width: 600px;
       height: 400px;
       /*background-color: rgba(0,0,0,0.9);*/
       opacity: 1;
     }
+    /*fills screen with result*/
     #resultMap {
       position: fixed;
       inset: 0;
       z-index: 1001;
     }
     nav{position:relative; z-index:1100;}
+    /*submit button on the mini map*/
     #guessBtn{
       position: absolute;
       left: 0;
@@ -53,6 +58,7 @@
       width: 140px;
       z-index: 1001;
     }
+    /*next button on round result page*/
     .next-btn{
       position: fixed;
       bottom: 30px;
@@ -62,14 +68,15 @@
       width: 120px;
       z-index: 1102;
     }
-    #timer{ 
-      position:fixed; 
-      top:10px; 
+    /*timer (TO BE MODIFIED) for timed modes*/
+    #timer{
+      position:fixed;
+      top:10px;
       right:10px;
-      background:#0009; 
-      color:#fff; 
-      padding:.2rem .7rem; 
-      z-index:1101; 
+      background:#0009;
+      color:#fff;
+      padding:.2rem .7rem;
+      z-index:1101;
     }
 </style>
 </head>
@@ -85,10 +92,11 @@
     <!--<img src="{{ url_for('static', filename=img) }}" alt="my img">-->
     <div id="pano"></div>
 
+    <!--shows remaining time for timed mode-->
     {% if mode == 'timed' and not guessed %}
       <div id="timer">{{ remaining_time }}</div>
     {% endif %}
-    
+
     <div id="mini-container">
     <div id="mini">
       <button id="guessBtn" hidden>Submit Guess?</button>
@@ -125,7 +133,7 @@
     <script>
         // Initialize the map
         var map = L.map('mini').setView([40, -95], 4);
-        
+
         const guessBtn = document.getElementById('guessBtn');
         var lat = 0
         var lon = 0
@@ -164,13 +172,13 @@
               remaining -= 1;
               if (remaining <= 0){
                 clearInterval(tick);
-                document.getElementById('guessForm').submit();   
+                document.getElementById('guessForm').submit();
               } else {
                 box.textContent = remaining;
               }
             }, 1000);
           })();
-        {% endif %} 
+        {% endif %}
     </script>
 
   {% if guessed %}

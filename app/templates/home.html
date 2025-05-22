@@ -17,6 +17,7 @@
   <h1> Welcome to DevoGuessr, {{ username }}! </h1>
   <h2>Select a game mode</h2>
 
+  <!--Lists the untimed game modes-->
   <h2>Untimed</h2>
   <a href="{{ url_for('play', mode='untimed', region='nyc') }}">
     <img src="{{ url_for('static', filename='img/nyc.jpg') }}" alt="New York City" width="320">
@@ -35,6 +36,7 @@
     <p>World</p>
   </a>
 
+  <!--List the timed game modes-->
   <h2 style="margin-top:2rem">Timed</h2>
   <a href="{{ url_for('play', mode='timed', region='nyc') }}">
     <img src="{{ url_for('static', filename='img/nyc.jpg') }}" alt="New York City" width="320">
