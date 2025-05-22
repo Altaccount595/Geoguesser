@@ -88,3 +88,6 @@ tawabB -- 2025-05-21 10:40
 
 tawabB -- 2025-05-21 20:24
 * fixed minimap bug where only a small portion would be loaded when hover-expanded
+
+tawabB -- 2025-05-21 20:48
+* made minimap semi-transparent when mouse is not hovering over it, improving view of streetview
