@@ -59,7 +59,6 @@ def check_guess():
     lat = float(split[0])
     long = float(split[1])
     guess =  [lat, long]
-    #print(lat)
     answer= [session['location']['lat'], session['location']['long']]
     dist = haversine(guess[0], guess[1], answer[0], answer[1])
     return dist
@@ -146,12 +145,19 @@ def play(mode, region):
             session.modified = True
 
             return render_template(
-                "play.html",finished=False,guessed=True,
-                dist=round(dist,2),guess_lat=guess[0],guess_lon=guess[1],
-                lat=actual[0],lon=actual[1],round=session["round"],
+                "play.html",
+                finished=False,
+                guessed=True,
+                dist=round(dist,2),
+                guess_lat=guess[0],
+                guess_lon=guess[1],
+                lat=actual[0],lon=actual[1],
+                round=session["round"],
                 history=session["history"],
-                total=sum(p for _,p in session["history"]),map_key=getKey(),
-                mode=session["mode"]
+                total=sum(p for _,p in session["history"]),
+                map_key=getKey(),
+                mode=session["mode"],
+                current_points = pts
             )
 
         if "next" in request.form:
@@ -160,8 +166,11 @@ def play(mode, region):
             if session["round"] > 5:
                 total = sum(p for _, p in session["history"])
                 add_score(
-                    session["username"], points=total,
-                    distance=sum(d for d, _ in session["history"]),mode=session["mode"],region=region
+                    session["username"],
+                    points=total,
+                    distance=sum(d for d, _ in session["history"]),
+                    mode=session["mode"],
+                    region=region
                 )
                 session.setdefault("games", []).append({"scores": session["history"][:],"total":  total })
                 session["results"] = {
@@ -186,11 +195,16 @@ def play(mode, region):
         remaining = max(0, math.ceil(session["expires"] - time.time()))
 
     return render_template(
-        "play.html",guessed=False,finished=False,history=session.get("history", []),
+        "play.html",
+        guessed=False,
+        finished=False,
+        history=session.get("history", []),
         total=sum(p for _, p in session.get("history", [])),
         lat=session["location"]["lat"],lon=session["location"]["long"],
-        map_key=getKey(),round=session.get("round", 1),
-        mode=session["mode"],remaining_time=remaining
+        map_key=getKey(),
+        round=session.get("round", 1),
+        mode=session["mode"],
+        remaining_time=remaining
     )
 
 #leaderboard route
