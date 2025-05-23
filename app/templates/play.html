@@ -93,14 +93,14 @@
     <div id="pano"></div>
 
     <!--shows remaining time for timed mode-->
-    {% if mode == 'timed' and not guessed %}
+    {% if mode == 'timed'%}
       <div id="timer">{{ remaining_time }}</div>
     {% endif %}
 
     <div id="mini-container">
-    <div id="mini">
-      <button id="guessBtn" hidden>Submit Guess?</button>
-    </div>
+      <div id="mini">
+        <button id="guessBtn" hidden>Submit Guess?</button>
+      </div>
     </div>
 
     <form id="guessForm" method="POST" style="display:none">
@@ -109,8 +109,12 @@
     </form>
 
     {% if not finished %}
-    <!--script to get api for streetview-->
     <script>
+    /*
+     initialize google street view panorama for the current round.
+     • show player the starting POV
+     • expose position to logs
+    */
       window.initStreetView = function () {
         const loc = { lat: {{ lat|float }}, lng: {{ lon|float }} };
 
@@ -126,8 +130,6 @@
           );
         };
     </script>
-
-    <!--link to api-->
     <script src="https://maps.googleapis.com/maps/api/js?key={{ map_key }}&callback=initStreetView"></script>
     {% endif %}
     <script>
@@ -171,8 +173,8 @@
             const tick = setInterval(()=>{
               remaining -= 1;
               if (remaining <= 0){
-                clearInterval(tick);
-                document.getElementById('guessForm').submit();
+                location.reload();
+                return;
               } else {
                 box.textContent = remaining;
               }

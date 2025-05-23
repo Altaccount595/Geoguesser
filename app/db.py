@@ -5,7 +5,10 @@ Spring 2025
 p05 - DevoGuessr
 '''
 from werkzeug.security import generate_password_hash, check_password_hash
-import sqlite3, os, csv, random
+import csv
+import os
+import random
+import sqlite3
 
 DB_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "users.db")
 

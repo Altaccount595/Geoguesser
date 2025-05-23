@@ -1,7 +1,11 @@
-import requests, random, urllib.parse
+import requests
+import random
+import urllib.parse
 import numpy as np
 from PIL import Image
 from db import getRandLoc #, getRandAddress
+#import os
+#from .db import getRandLoc
 def images_are_equal(img1_path, img2_path):
     img1 = Image.open(img1_path).convert('RGB')
     img2 = Image.open(img2_path).convert('RGB')
@@ -54,3 +58,4 @@ def getKey():
         print('error')
         return
     return key
+	#return os.environ["MAPS_KEY"] for droplet

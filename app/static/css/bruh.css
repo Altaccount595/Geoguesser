@@ -14,3 +14,14 @@ body, html {
     max-width: 500px;
     max-height: 500px;
 }
+
+.mode-columns {
+    display: flex;         
+    gap: 3rem;          
+    flex-wrap: wrap;       
+  }
+  
+  .mode-column {
+    flex: 1 1 280px;       
+  }
+  

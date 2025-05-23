@@ -1,7 +1,26 @@
-from flask import Flask, render_template, url_for, session, request, redirect, jsonify, flash
+from flask import (
+    Flask,
+    flash,
+    jsonify,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
+)
+
+import math
+import os
+import time
+
+import db
 from db import getRandLoc, add_score, top_scores
-import db, os, math, time
 from api_handle import image, getKey
+
+#from .db import getRandLoc, add_score, top_scores
+#import os, math, time
+#from . import db
+#from .api_handle import image, getKey
 
 RADIUS = 6371.0
 MAX_DISTANCE = 120 # km from bronx to staten island
@@ -91,6 +110,28 @@ def play(mode, region):
     if session["mode"] == "timed" and time.time() > session.get("expires", 0):
         session["history"].append((MAX_DISTANCE, 0))
         session["round"] += 1
+
+        if session["round"] > 5:
+            total = sum(p for _, p in session["history"])
+            add_score(
+                session["username"], points=total,
+                distance=sum(d for d, _ in session["history"]),
+                mode=session["mode"], region=region
+            )
+            session.setdefault("games", []).append(
+                {"scores": session["history"][:], "total": total}
+            )
+            session["results"] = {
+                "history": session["history"],
+                "total": total,
+                "mode": session["mode"]
+            }
+            for k in ("round", "location", "history", "expires", "mode"):
+                session.pop(k, None)
+            return redirect(url_for("results", mode=mode, region=region))
+        lat, lon = getRandLoc()
+        session["location"] = {"lat": lat, "long": lon, "heading": 0}
+        session["expires"] = time.time() + 60
         session.modified = True
         return redirect(url_for("play", mode=mode, region=region))
 
@@ -142,10 +183,10 @@ def play(mode, region):
 
     remaining = None
     if session["mode"] == "timed":
-        remaining = max(0, int(session["expires"] - time.time()))
+        remaining = max(0, math.ceil(session["expires"] - time.time()))
 
     return render_template(
-        "play.html",finished=False,history=session.get("history", []),
+        "play.html",guessed=False,finished=False,history=session.get("history", []),
         total=sum(p for _, p in session.get("history", [])),
         lat=session["location"]["lat"],lon=session["location"]["long"],
         map_key=getKey(),round=session.get("round", 1),
