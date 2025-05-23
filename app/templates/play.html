@@ -68,15 +68,28 @@
       width: 120px;
       z-index: 1102;
     }
+<<<<<<< Updated upstream
     /*timer (TO BE MODIFIED) for timed modes*/
+=======
+>>>>>>> Stashed changes
     #timer{
       position:fixed;
       top:10px;
       right:10px;
+<<<<<<< Updated upstream
+=======
+      width:150px;
+      height:75px;
+>>>>>>> Stashed changes
       background:#0009;
       color:#fff;
       padding:.2rem .7rem;
       z-index:1101;
+<<<<<<< Updated upstream
+=======
+      font-size: 50px;
+      text-align: center
+>>>>>>> Stashed changes
     }
 </style>
 </head>
@@ -173,8 +186,13 @@
             const tick = setInterval(()=>{
               remaining -= 1;
               if (remaining <= 0){
+<<<<<<< Updated upstream
                 location.reload();
                 return;
+=======
+                clearInterval(tick);
+                document.getElementById('guessForm').submit();
+>>>>>>> Stashed changes
               } else {
                 box.textContent = remaining;
               }
