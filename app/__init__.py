@@ -65,11 +65,11 @@ def check_guess():
 
 # home route
 
-@app.route("/landing")
+@app.route("/")
 def landing():
     return render_template("landing.html")
 
-@app.route("/")
+@app.route("/home")
 def home():
     if "username" not in session:
         return redirect(url_for("auth"))

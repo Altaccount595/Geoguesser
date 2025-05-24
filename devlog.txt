@@ -103,3 +103,14 @@ alexL -- 2025-05-22 21:30
 * fixed timed mode so it redirects properly
 * added home css
 * updated import styling 
+
+alexL -- 2025-05-24 3:30
+* moved styling and js to play.css and play.js
+
+alexL -- 2025-05-24 5:00
+* added dashboard that shows the current round, score, and map (on the play route)
+* added settings (for now, includes option to leave game)
+* fixed round history issues so that users can not press back now (as GeoGusser does)
+
+alexL -- 2025-05-24 7:40
+* made landing page work (styling NEEDS to be updated for all pages)
