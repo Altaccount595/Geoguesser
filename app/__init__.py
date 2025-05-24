@@ -92,6 +92,14 @@ def results(mode, region):
 def play(mode, region):
     if "username" not in session:
         return redirect(url_for("auth"))
+    
+    if "fresh" in request.args:                          
+        for k in ("round", "location", "history", "expires", "mode", "region"):
+            session.pop(k, None)
+
+    if "round" in session and (session.get("mode") != mode or session.get("region") != region):
+        for k in ("round", "location", "history", "expires", "mode", "region"):
+            session.pop(k, None)
 
     if "round" not in session:
         lat,lon = getRandLoc()
@@ -156,7 +164,8 @@ def play(mode, region):
                 history=session["history"],
                 total=sum(p for _,p in session["history"]),
                 map_key=getKey(),
-                mode=session["mode"]
+                mode=session["mode"],
+                region=region
             )
 
         if "next" in request.form:
@@ -204,7 +213,15 @@ def play(mode, region):
         round=session.get("round", 1),
         mode=session["mode"],
         remaining_time=remaining,
+        region=region,
     )
+
+#leave game
+@app.route("/leave", methods=["POST", "GET"])
+def leave_game():
+    for k in ("round", "location", "history", "expires", "mode"):
+        session.pop(k, None)          
+    return redirect(url_for("home"))
 
 #leaderboard route
 @app.route("/leaderboard")

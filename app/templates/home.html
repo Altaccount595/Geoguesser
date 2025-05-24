@@ -20,10 +20,11 @@
   <!--Lists the untimed game modes-->
     <div class="mode-column">
         <h2>Untimed</h2>
-        <a href="{{ url_for('play', mode='untimed', region='nyc') }}">
+        <a href="{{ url_for('play', mode='untimed', region='nyc', fresh=1) }}">
           <img src="{{ url_for('static', filename='img/nyc.jpg') }}" alt="New York City" width="320">
           <p>New York City</p>
         </a>
+        <!--
         <a href="{{ url_for('play', region='us') }}">
           <img src="{{ url_for('static', filename='img/us.jpg') }}" alt="United States of America" width="320">
           <p>United States of America</p>
@@ -36,15 +37,17 @@
           <img src="{{ url_for('static', filename='img/world.jpg') }}" alt="World" width="320">
           <p>World</p>
         </a>
+        -->
     </div>
 
     <div class="mode-column">
     <!--List the timed game modes-->
       <h2 style="margin-top:2rem">Timed</h2>
-      <a href="{{ url_for('play', mode='timed', region='nyc') }}">
+      <a href="{{ url_for('play', mode='timed', region='nyc', fresh=1) }}">
         <img src="{{ url_for('static', filename='img/nyc.jpg') }}" alt="New York City" width="320">
         <p>New York City</p>
       </a>
+      <!--
       <a href="{{ url_for('play', mode='timed', region='us') }}">
         <img src="{{ url_for('static', filename='img/us.jpg') }}" alt="United States of America" width="320">
         <p>United States of America</p>
@@ -57,6 +60,7 @@
         <img src="{{ url_for('static', filename='img/world.jpg') }}" alt="World" width="320">
         <p>World</p>
       </a>
+      --> 
     </div>
 
   </div>

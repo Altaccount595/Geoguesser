@@ -82,4 +82,9 @@ if (guessed){
     };
 }
 
-    
+// Adapted from: MODEL: ChatGPT 4o TIME: 2025-05-24 6:45PM
+// Purpose: redirect user to home if browser navigation is back/forward
+// Prompt: how do i tell when a page is reshown by a back/forward button and automatically send the user to the home page when this button is pressed?”
+if (performance.getEntriesByType("navigation")[0].type === "back_forward") { 
+    location.replace("/");          
+  }

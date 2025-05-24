@@ -17,6 +17,12 @@
 
     <div id="pano"></div>
 
+    <div id="statusBar">
+      <div class="label">MAP</div><div class="value">{{ region|title }}</div>
+      <div class="label">ROUND</div><div class="value">{{ round }} / 5</div>
+      <div class="label">SCORE</div><div class="value">{{ total }}</div>
+    </div>
+
     <!--shows remaining time for timed mode-->
     {% if mode == 'timed'%}
       <div id="timer">{{ remaining_time }}</div>
@@ -76,5 +82,12 @@
 
     <script src="{{ url_for('static', filename='js/play.js') }}"></script>
 
+    <div id="settingsMenu">
+      <span id="cog" title="Game settings">⚙</span>
+    
+      <form id="leaveForm" action="{{ url_for('leave_game') }}" method="POST">
+        <button id="leaveBtn" type="submit">Leave game</button>
+      </form>
+    </div>
 </body>
 </html>
