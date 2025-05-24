@@ -4,97 +4,17 @@
   <meta charset="UTF-8">
   <title>Game</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css">
-  <link rel="stylesheet" href="../static/css/play.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/play.css') }}">
   <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
-  <style>
-    html,
-    body {
-      margin: 0;
-      height: 100%;
-      overflow:hidden;
-    }
-    /*fills screen with streetview*/
-    #pano {
-      position: fixed;
-      inset: 0;
-      height: 100%;
-    }
-    /*mini map container*/
-    #mini-container {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      width: 300px;
-      height: 200px;
-      z-index: 1000;
-      /*background-color:rgba(0,0,0,0.2);*/
-      transition: all 0.3s ease;
-      opacity: 0.3;
-    }
-    #mini {
-      width: 100%;
-      height: 100%;
-    }
-    /*hover effects on mini map*/
-    #mini-container:hover{
-      width: 600px;
-      height: 400px;
-      /*background-color: rgba(0,0,0,0.9);*/
-      opacity: 1;
-    }
-    /*fills screen with result*/
-    #resultMap {
-      position: fixed;
-      inset: 0;
-      z-index: 1001;
-    }
-    nav{position:relative; z-index:1100;}
-    /*submit button on the mini map*/
-    #guessBtn{
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 4px;
-      margin: auto;
-      width: 140px;
-      z-index: 1001;
-    }
-    /*next button on round result page*/
-    .next-btn{
-      position: fixed;
-      bottom: 30px;
-      left: 0;
-      right: 0;
-      margin: auto;
-      width: 120px;
-      z-index: 1102;
-    }
-
-    #timer{
-      position:fixed;
-      top:10px;
-      right:10px;
-      width:150px;
-      height:75px;
-      background:#0009;
-      color:#fff;
-      padding:.2rem .7rem;
-      z-index:1101;
-      font-size: 50px;
-      text-align: center
-    }
-</style>
 </head>
 <body>
+    <nav>
+      <a href="{{ url_for('home') }}">Home</a>
+      <a href="{{ url_for('leaderboard', region='nyc') }}">Leaderboard</a>
+      <a href="{{ url_for('profile') }}">Profile</a>
+      <a href="{{ url_for('logout') }}">Logout</a>
+    </nav>
 
-  <nav>
-    <a href="{{ url_for('home') }}">Home</a>
-    <a href="{{ url_for('leaderboard', region='nyc') }}">Leaderboard</a>
-    <a href="{{ url_for('profile') }}">Profile</a>
-    <a href="{{ url_for('logout') }}">Logout</a>
-  </nav>
-
-    <!--<img src="{{ url_for('static', filename=img) }}" alt="my img">-->
     <div id="pano"></div>
 
     <!--shows remaining time for timed mode-->
@@ -113,106 +33,48 @@
       <input type="hidden" name="next" value="" disabled>
     </form>
 
-    {% if not finished %}
-    <script>
-    /*
-     initialize google street view panorama for the current round.
-     • show player the starting POV
-     • expose position to logs
-    */
-      window.initStreetView = function () {
-        const loc = { lat: {{ lat|float }}, lng: {{ lon|float }} };
-
-        new google.maps.StreetViewPanorama(
-          document.getElementById('pano'),
-            {
-              position: loc,
-              pov: { heading: 0, pitch: 0 },
-              zoom: 1,
-              disableDefaultUI: true,
-              showRoadLabels: false
-            }
-          );
-        };
-    </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key={{ map_key }}&callback=initStreetView"></script>
+    {% if guessed %}
+      <div id="resultMap"></div>
+      <button id="nextBtn" class="next-btn" hidden>Next Round</button>
     {% endif %}
-    <script>
-        // Initialize the map
-        var map = L.map('mini').setView([40, -95], 4);
 
-        const guessBtn = document.getElementById('guessBtn');
-        var lat = 0
-        var lon = 0
-            const textBox = document.getElementById("input");
-            textBox.value = 0 + ", " + 0;
-        // Add OpenStreetMap layer
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        //attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(map);
+    {% if not finished %}
+      <script>
+      // initialize google street view panorama for the current round.
+      // • show player the starting POV
+      // • expose position to logs
+        window.initStreetView = function () {
+          const loc = { lat: {{ lat|float }}, lng: {{ lon|float }} };
 
-        const container = document.getElementById('mini-container');
-            container.addEventListener('transitionend', () => {   //hover stuff (hopefully it owrks??)
-            map.invalidateSize();
-          });
-
-        map.on('click', function(e) {
-            L.popup({closeButton: false})
-            .setLatLng(e.latlng)
-            .setContent('Your guess')
-            .openOn(map);
-
-            lat = e.latlng.lat.toFixed(4);
-            lon = e.latlng.lng.toFixed(4);
-            console.log("these are the coords:" + lat + lon)
-
-            textBox.value = lat + ", " + lon;
-            guessBtn.hidden = false;
-        });
-        guessBtn.onclick=()=>document.getElementById('guessForm').submit();
-
-        {% if mode == 'timed' and not guessed %}
-          (function(){
-            let remaining = {{ remaining_time }};
-            const box = document.getElementById('timer');
-            const tick = setInterval(()=>{
-              remaining -= 1;
-              if (remaining <= 0){
-                clearInterval(tick);
-                document.getElementById('guessForm').submit();
-              } else {
-                box.textContent = remaining;
+          new google.maps.StreetViewPanorama(
+            document.getElementById('pano'),
+              {
+                position: loc,
+                pov: { heading: 0, pitch: 0 },
+                zoom: 1,
+                disableDefaultUI: true,
+                showRoadLabels: false
               }
-            }, 1000);
-          })();
-        {% endif %}
-    </script>
-
-  {% if guessed %}
-    <div id="resultMap"></div>
-    <button id="nextBtn" class="next-btn" hidden>Next Round</button>
+            );
+          };
+      </script>
+      <script src="https://maps.googleapis.com/maps/api/js?key={{ map_key }}&callback=initStreetView"></script>
+    {% endif %}
 
     <script>
-      //build overlay map
-      const res = L.map('resultMap',{zoomControl:false,attributionControl:false});
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(res);
-
-      //get players guess g and actual answer a
-      const g=[{{ guess_lat }},{{ guess_lon }}],a=[{{ lat }},{{ lon }}];
-
-      L.circleMarker(g,{radius:6}).addTo(res);  //blue marker for players guess
-      L.circleMarker(a,{radius:6,color:'red',fillColor:'red'}).addTo(res); //red marker for actual location
-      L.polyline([g,a],{dashArray:'6 6'}).addTo(res); //dashed line
-      res.fitBounds([g,a],{padding:[40,40]}); //fit map bounds
-
-      const nextBtn=document.getElementById('nextBtn');
-      nextBtn.hidden=false;
-      nextBtn.onclick=()=>{
-      document.querySelector('input[name="next"]').disabled=false;
-      document.getElementById('guessForm').submit();
-    };
+      window.gameData = {
+        lat: {{ lat|float }},
+        lon: {{ lon|float }},
+        mapKey: {{ map_key|trim|tojson }},
+        mode: {{ mode|tojson }},
+        remaining: {{ remaining_time|default(0)|int }},
+        guessed: {{ guessed|tojson }},
+        guessLat: {{ guess_lat|default(none)|tojson }},
+        guessLon: {{ guess_lon|default(none)|tojson }}
+      };
     </script>
-  {% endif %}
+
+    <script src="{{ url_for('static', filename='js/play.js') }}"></script>
 
 </body>
 </html>

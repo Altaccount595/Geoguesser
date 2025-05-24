@@ -53,7 +53,7 @@ def image(lat,long,heading=0, fov=90):
 def getKey():
     try:
         with open('keys/streetview.txt', 'r') as file:
-            key = file.read()
+            key = file.read().strip()
     except:
         print('error')
         return

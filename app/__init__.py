@@ -156,8 +156,7 @@ def play(mode, region):
                 history=session["history"],
                 total=sum(p for _,p in session["history"]),
                 map_key=getKey(),
-                mode=session["mode"],
-                current_points = pts
+                mode=session["mode"]
             )
 
         if "next" in request.form:
@@ -204,7 +203,7 @@ def play(mode, region):
         map_key=getKey(),
         round=session.get("round", 1),
         mode=session["mode"],
-        remaining_time=remaining
+        remaining_time=remaining,
     )
 
 #leaderboard route
