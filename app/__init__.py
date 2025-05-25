@@ -30,7 +30,7 @@ app = Flask(__name__)
 
 app.secret_key = os.urandom(32)
 
-db.create_db()
+#db.create_db()
 
 # helper functions
 
@@ -102,7 +102,7 @@ def play(mode, region):
             session.pop(k, None)
 
     if "round" not in session:
-        lat,lon = getRandLoc()
+        lat,lon = getRandLoc(region)
         session.update(
             {
                 "region": region,"mode": mode,
@@ -136,7 +136,7 @@ def play(mode, region):
             for k in ("round", "location", "history", "expires", "mode"):
                 session.pop(k, None)
             return redirect(url_for("results", mode=mode, region=region))
-        lat, lon = getRandLoc()
+        lat, lon = getRandLoc(region)
         session["location"] = {"lat": lat, "long": lon, "heading": 0}
         session["expires"] = time.time() + 60
         session.modified = True
@@ -190,7 +190,7 @@ def play(mode, region):
                     session.pop(k, None)
                 return redirect(url_for("results", mode=mode, region=region))
 
-            lat,lon = getRandLoc()
+            lat,lon = getRandLoc(region)
             session["location"] = {"lat": lat, "long": lon, "heading": 0}
             if session["mode"] == "timed":
                 session["expires"] = time.time() + 60

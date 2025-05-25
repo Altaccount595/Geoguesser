@@ -24,6 +24,7 @@ def create_db():
     cur.executescript("""
         DROP TABLE IF EXISTS scores;
         DROP TABLE IF EXISTS address;
+        DROP TABLE IF EXISTS loc;  
         CREATE TABLE IF NOT EXISTS users (
             user_id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE NOT NULL,
@@ -40,25 +41,17 @@ def create_db():
 	);
 
 	CREATE TABLE IF NOT EXISTS loc (
-            loc_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        loc_id INTEGER PRIMARY KEY AUTOINCREMENT,
 	    lat REAL NOT NULL,
-	    long REAL NOT NULL
+	    long REAL NOT NULL,
+        region TEXT NOT NULL DEFAULT 'nyc'
         );
     """)
-    """CREATE TABLE IF NOT EXISTS address (
-            add_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            num INTEGER NOT NULL,
-            street TEXT NOT NULL,
-            city TEXT NOT NULL,
-            region TEXT NOT NULL,
-            post INTEGER NOT NULL
-        );"""
     conn.commit()
     conn.close()
 
 # add users to users database
 def add_user(username, password):
-    create_db()
     conn = get_db_connection()
     cur = conn.cursor()
     pw_hash = generate_password_hash(password)
@@ -102,78 +95,39 @@ def add_score(username, points, distance, mode="untimed",  region="nyc"):
     conn.close()
     return True
 
-# creates db for locations (only works for new york right now, so subject to change)
-'''
-def loc_db():
-    count = 0
+def import_csv_to_loc(region, csv_path):
     conn = get_db_connection()
-    cur = conn.cursor()
-    with open('../../city_of_new_york.csv', newline='') as csvfile:
-        reader = csv.reader(csvfile)
+    cur  = conn.cursor()
+
+    with open(csv_path, newline='') as f:
+        reader = csv.reader(f)
+        next(reader, None)                
         for row in reader:
-            #print(row[0], row[1])
-            if(count > 5000):
-                break
-            cur.execute("INSERT INTO loc (lat, long) VALUES (?, ?)", (row[1], row[0]))
-            cur.execute("SELECT MAX(loc_id) FROM loc")
-            #len = cur.fetchone()[0]
-            #print(row[1], row[0])
-            count += 1
+            lon = float(row[0])            
+            lat = float(row[1])            
+            cur.execute(
+                "INSERT INTO loc (lat, long, region) VALUES (?, ?, ?)",
+                (lat, lon, region)
+            )
     conn.commit()
     conn.close()
-'''
-# creates db for addresses
-'''
-def address_db():
-    count = 0
-    conn = get_db_connection()
-    cur = conn.cursor()
-    with open('../statewide.csv', newline='') as csvfile:
-        reader = csv.reader(csvfile)
-        for row in reader:
-            #print(row[0], row[1])
-            if(count > 1000):
-                break
-            cur.execute("INSERT INTO address (num, street, city, region, post) VALUES (?, ?, ?, ?, ?)", (row[2], row[3], row[5], row[7], row[8]))
-            cur.execute("SELECT MAX(add_id) FROM address")
-            #len = cur.fetchone()[0]
-            #print(row[1], row[0])
-            count += 1
-    conn.commit()
-    conn.close()
-'''
 
 #gets random location, this is also subject to change with the use of Google Geocoding API in order to avoid unintellgible coords
-def getRandLoc():
+def getRandLoc(region="nyc"):
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute("SELECT MAX(loc_id) FROM loc;")
-    len = cur.fetchone()[0]
-    print(len)
-    rand = random.randint(1, len)
-    cur.execute("SELECT * FROM loc WHERE loc_id = ?", (rand,))
-    rand_loc = cur.fetchone()
-    lat_long = [rand_loc[1], rand_loc[2]]
-    #print(lat_long)
+    if region == "global":
+        cur.execute("SELECT lat, long FROM loc ORDER BY RANDOM() LIMIT 1")
+    else:
+        cur.execute(
+            "SELECT lat, long FROM loc WHERE region = ? ORDER BY RANDOM() LIMIT 1",
+            (region,)
+        )
+    row = cur.fetchone()
     conn.close()
-    return lat_long
-
-# gets random address (should be used to ensure proper coords)
-'''
-def getRandAddress():
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute("SELECT MAX(add_id) FROM address;")
-    len = cur.fetchone()[0]
-    #print(len)
-    rand = random.randint(0, len)
-    cur.execute("SELECT * FROM address WHERE add_id = ?", (rand,))
-    loc = cur.fetchone()
-    address = f"{loc[1]} {loc[2]}, {loc[3]}, {loc[4]} {loc[5]}"
-    #print(address)
-    conn.close()
-    return address
-'''
+    if not row:
+        raise ValueError("No coordinates found for region " + region + ".")
+    return [row["lat"], row["long"]]
 
 #gets top scores to serve to leaderboard
 def top_scores(region="nyc"):
@@ -192,6 +146,3 @@ def top_scores(region="nyc"):
     rows = cur.fetchall()
     conn.close()
     return rows
-
-#create_db()
-#loc_db()
