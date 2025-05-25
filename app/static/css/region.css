@@ -1,0 +1,23 @@
+.mode-buttons{
+    margin:1rem 0;
+    display:flex;
+    gap:1rem;
+    flex-wrap:wrap;
+}
+.mode-btn{
+    padding:.6rem 1.2rem;
+    background:white;
+    color:black;
+    text-decoration:none;
+    border:2px solid white;
+    border-radius:6px;
+    font-weight:bold;
+    transition:background .2s, color .2s;
+}
+
+.mode-btn:hover,
+.mode-btn:active,
+.mode-btn:focus{
+    background:limegreen;   
+    color:white;
+}

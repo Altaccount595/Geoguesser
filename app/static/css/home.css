@@ -25,3 +25,28 @@ body, html {
     flex: 1 1 280px;       
   }
   
+/*regions layout*/
+.regions {
+  display: flex;
+  gap: 3rem;
+  flex-wrap: wrap;
+}
+
+/*caption*/
+.regions a {
+  color: #fff;
+  text-align: center;
+  text-decoration: none;
+}
+
+/*thumbnail hover*/
+.regions img {
+  width: 320px;        
+  height: 200px;
+  object-fit: cover;    
+  border-radius: 8px;    
+  transition: transform 0.25s;
+}
+.regions img:hover {
+  transform: scale(1.08);  
+}

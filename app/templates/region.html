@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ region|title }}</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/region.css') }}">
+</head>
+<body>
+  <nav>
+    <a href="{{ url_for('home') }}">Home</a>
+    <a href="{{ url_for('profile') }}">Profile</a>
+    <a href="{{ url_for('logout') }}">Logout</a>
+  </nav>
+
+  <h1>{{ region|title }}</h1>
+
+  <div class="mode-buttons">
+    <a class="mode-btn"href="{{ url_for('play', mode='untimed', region=region, fresh=1) }}">
+       Untimed
+    </a>
+
+    <a class="mode-btn"href="{{ url_for('play', mode='timed', region=region, fresh=1) }}">
+       Timed (60 s/round)
+    </a>
+  </div>
+
+  <h2>Top 25</h2>
+  <table>
+    <tr><th>#</th><th>User</th><th>km off</th><th>Points</th></tr>
+    {% for row in scores %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ row.username }}</td>
+        <td>{{ row.distance }}</td>
+        <td>{{ row.points }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+</body>
+</html>

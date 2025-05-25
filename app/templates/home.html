@@ -10,21 +10,20 @@
 <body>
   <nav class>
     <a href="{{ url_for('home') }}">Home</a>
-    <a href="{{ url_for('leaderboard', region='nyc') }}">Leaderboard</a>
     <a href="{{ url_for('profile') }}">Profile</a>
     <a href="{{ url_for('logout') }}">Logout</a>
   </nav>
   <h1> Welcome to DevoGuessr, {{ username }}! </h1>
-  <h2>Select a game mode</h2>
-  <div class="mode-columns">
-  <!--Lists the untimed game modes-->
-    <div class="mode-column">
-        <h2>Untimed</h2>
-        <a href="{{ url_for('play', mode='untimed', region='nyc', fresh=1) }}">
-          <img src="{{ url_for('static', filename='img/nyc.jpg') }}" alt="New York City" width="320">
-          <p>New York City</p>
-        </a>
-        <!--
+  <h2>Select a region</h2>
+
+  <div class="regions">
+    <a href="{{ url_for('region_page', region='nyc') }}">
+      <img src="{{ url_for('static', filename='img/nyc.jpg') }}" alt="New York City">
+      <p>New York City</p>
+    </a>
+  </div>
+
+        <!--temp
         <a href="{{ url_for('play', region='us') }}">
           <img src="{{ url_for('static', filename='img/us.jpg') }}" alt="United States of America" width="320">
           <p>United States of America</p>
@@ -38,31 +37,5 @@
           <p>World</p>
         </a>
         -->
-    </div>
-
-    <div class="mode-column">
-    <!--List the timed game modes-->
-      <h2 style="margin-top:2rem">Timed</h2>
-      <a href="{{ url_for('play', mode='timed', region='nyc', fresh=1) }}">
-        <img src="{{ url_for('static', filename='img/nyc.jpg') }}" alt="New York City" width="320">
-        <p>New York City</p>
-      </a>
-      <!--
-      <a href="{{ url_for('play', mode='timed', region='us') }}">
-        <img src="{{ url_for('static', filename='img/us.jpg') }}" alt="United States of America" width="320">
-        <p>United States of America</p>
-      </a>
-      <a href="{{ url_for('play', mode='timed', region='europe') }}">
-        <img src="{{ url_for('static', filename='img/europe.jpg') }}" alt="Europe" width="320">
-        <p>Europe</p>
-      </a>
-      <a href="{{ url_for('play', mode='timed', region='global') }}">
-        <img src="{{ url_for('static', filename='img/world.jpg') }}" alt="World" width="320">
-        <p>World</p>
-      </a>
-      --> 
-    </div>
-
-  </div>
 </body>
 </html>

@@ -219,9 +219,17 @@ def play(mode, region):
 #leave game
 @app.route("/leave", methods=["POST", "GET"])
 def leave_game():
+    region = request.form.get("region", "nyc") 
     for k in ("round", "location", "history", "expires", "mode"):
         session.pop(k, None)          
-    return redirect(url_for("home"))
+    return redirect(url_for("region_page", region=region))
+
+@app.route("/region/<region>")
+def region_page(region):
+    if "username" not in session:
+        return redirect(url_for("auth"))
+    scores = db.top_scores(region)[:25]      
+    return render_template("region.html",region=region,scores=scores,username=session["username"])
 
 #leaderboard route
 @app.route("/leaderboard")
