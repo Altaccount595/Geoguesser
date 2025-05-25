@@ -117,3 +117,7 @@ alexL -- 2025-05-24 19:40
 
 alexL -- 2025-05-24 21:00
 * added region template such that each region has its own template with untimed/timed modes and leaderboard specific to region
+
+alexL -- 2025-05-25 17:30
+* added function to streamline importing regions into our database
+* began Europe
