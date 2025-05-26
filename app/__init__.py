@@ -23,7 +23,12 @@ from api_handle import image, getKey
 #from .api_handle import image, getKey
 
 RADIUS = 6371.0
-MAX_DISTANCE = 120 # km from bronx to staten island
+REGION_MAX_DISTANCE = {
+    "nyc": 120, # km from bronx to staten island
+    "us": 4500, # km from maine to hawaii
+    "europe": 3800, # km from portugal to ural mountains of russia
+    "global": 20000, # half earth's circumference
+}
 POINT_CAP = 5000
 
 app = Flask(__name__)
@@ -52,6 +57,9 @@ def haversine(lat1, lon1, lat2, lon2):
          * math.sin(dLon / 2))
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
     return RADIUS * c
+
+def max_distance(region):
+    return REGION_MAX_DISTANCE.get(region, REGION_MAX_DISTANCE["global"])
 
 def check_guess():
     loc = (request.form.get('input'))
@@ -115,7 +123,7 @@ def play(mode, region):
         session.modified = True
 
     if session["mode"] == "timed" and time.time() > session.get("expires", 0):
-        session["history"].append((MAX_DISTANCE, 0))
+        session["history"].append((max_distance(region), 0))
         session["round"] += 1
 
         if session["round"] > 5:
@@ -145,7 +153,7 @@ def play(mode, region):
     if request.method == "POST":
         if "input" in request.form and "next" not in request.form:
             dist = check_guess()
-            pts = round(POINT_CAP * math.exp(-10 * (dist / MAX_DISTANCE)))
+            pts = round(POINT_CAP * math.exp(-10 * (dist / max_distance(region))))
             guess = list(map(float, request.form["input"].split(", ")))
             actual = [session["location"]["lat"], session["location"]["long"]]
 
