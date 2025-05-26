@@ -112,6 +112,12 @@ def import_csv_to_loc(region, csv_path):
     conn.commit()
     conn.close()
 
+def import_folder_to_loc(region, folder_path):
+    for file in os.listdir(folder_path):       
+        if file.lower().endswith(".csv"):     
+            csv_path = os.path.join(folder_path, file)
+            import_csv_to_loc(region, csv_path)
+
 #gets random location, this is also subject to change with the use of Google Geocoding API in order to avoid unintellgible coords
 def getRandLoc(region="nyc"):
     conn = get_db_connection()
