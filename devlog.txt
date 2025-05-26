@@ -121,3 +121,7 @@ alexL -- 2025-05-24 21:00
 alexL -- 2025-05-25 17:30
 * added function to streamline importing regions into our database
 * began Europe
+
+alexL -- 2025-05-25 18:45
+* optimized importing regions by making it such that you can just import a folder of csvs(the locs)
+* fixed points system for each region (before it was working only for NYC)
