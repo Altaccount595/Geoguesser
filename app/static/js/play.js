@@ -1,12 +1,12 @@
 const {
-    lat: initLat,                 
+    lat: initLat,
     lon: initLon,
     mode,
     remaining,
     guessed,
     guessLat,
     guessLon,
-    region 
+    region
 } = window.gameData;
 
 
@@ -42,12 +42,12 @@ map.on('click', function(e) {
     textBox.value = lat + ", " + lon;
     guessBtn.hidden = false;
 });
-    
+
 guessBtn.onclick=()=>document.getElementById('guessForm').submit();
 
 if (mode === 'timed' && !guessed) {
     (function(){
-        let t = remaining;  
+        let t = remaining;
         const box = document.getElementById('timer');
         const tick = setInterval(()=>{
         t -= 1;
@@ -83,9 +83,32 @@ if (guessed){
     };
 }
 
+function animatePoints(amount) {
+  const scoreElement = document.getElementById("score");
+  let currentScore = parseInt(scoreElement.innerText);
+  const total = document.getElementById("total")
+
+  const scoreOffset = scoreElement.getBoundingClientRect();
+  const centerX = window.innerWidth / 2;
+  const centerY = window.innerHeight / 2;
+
+
+
+  // right now this moves score from center of screen (not sure if we want this yet)
+  setTimeout(() => {
+    score.style.transition = "transform 1.5s ease-out, opacity 1s ease-out";
+    if (amount > 0) {
+      score.style.transform = `translate(${balanceOffset.left - centerX}px, ${balanceOffset.top - centerY}px)`;
+    } else {
+      score.style.transform = `translate(${centerX - balanceOffset.left}px, ${centerY - balanceOffset.top}px)`;
+    }
+      score.style.opacity = "0";
+    }, 50);
+}
+
 // Adapted from: MODEL: ChatGPT 4o TIME: 2025-05-24 6:45PM
 // Purpose: redirect user to home if browser navigation is back/forward
 // Prompt: how do i tell when a page is reshown by a back/forward button and automatically send the user to the home page when this button is pressed?”
-if (performance.getEntriesByType("navigation")[0].type === "back_forward") { 
-    location.replace("/region/" + region);         
+if (performance.getEntriesByType("navigation")[0].type === "back_forward") {
+    location.replace("/region/" + region);
   }
