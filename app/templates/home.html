@@ -25,17 +25,14 @@
       <img src="{{ url_for('static', filename='img/europe.jpg') }}" alt="Europe">
       <p>Europe</p>
     </a>
+    <a href="{{ url_for('region_page', region='us') }}">
+      <img src="{{ url_for('static', filename='img/us.jpg') }}" alt="United States of America">
+      <p>United States of America</p>
+    </a>
+    <a href="{{ url_for('region_page', region='global') }}">
+      <img src="{{ url_for('static', filename='img/world.jpg') }}" alt="World">
+      <p>World</p>
+    </a>
   </div>
-
-        <!--temp
-        <a href="{{ url_for('play', region='us') }}">
-          <img src="{{ url_for('static', filename='img/us.jpg') }}" alt="United States of America" width="320">
-          <p>United States of America</p>
-        </a>
-        <a href="{{ url_for('play', region='global') }}">
-          <img src="{{ url_for('static', filename='img/world.jpg') }}" alt="World" width="320">
-          <p>World</p>
-        </a>
-        -->
 </body>
 </html>
