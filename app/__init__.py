@@ -165,6 +165,7 @@ def play(mode, region):
                 finished=False,
                 guessed=True,
                 dist=round(dist,2),
+                pts=pts,
                 guess_lat=guess[0],
                 guess_lon=guess[1],
                 lat=actual[0],lon=actual[1],

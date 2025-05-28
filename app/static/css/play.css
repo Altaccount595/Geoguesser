@@ -121,3 +121,15 @@ nav { display:none; }
   font-weight:700;
   margin-right:12px
 }
+
+/*stats per round*/
+#roundStats{
+  background: #fff;
+  padding: .3rem .7rem;
+  position: fixed;
+  bottom: 90px;       
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1102;
+  border-radius: 6px;
+}

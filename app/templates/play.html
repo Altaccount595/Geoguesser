@@ -34,6 +34,10 @@
 
     {% if guessed %}
       <div id="resultMap"></div>
+      <div id="roundStats">
+        <span id="dist">{{ dist }}</span> km 
+        <span id="pts">0</span>/5000 pts
+      </div>
       <button id="nextBtn" class="next-btn" hidden>Next Round</button>
     {% endif %}
 
@@ -70,7 +74,8 @@
         guessed: {{ guessed|tojson }},
         guessLat: {{ guess_lat|default(none)|tojson }},
         guessLon: {{ guess_lon|default(none)|tojson }},
-        region: {{ region|tojson }}
+        region: {{ region|tojson }},
+        pts: {{ pts|default(0)|int }}
       };
     </script>
 

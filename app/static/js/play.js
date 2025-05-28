@@ -6,7 +6,8 @@ const {
     guessed,
     guessLat,
     guessLon,
-    region
+    region,
+    pts: roundPts
 } = window.gameData;
 
 
@@ -75,35 +76,27 @@ if (guessed){
     L.polyline([g,a],{dashArray:'6 6'}).addTo(res); //dashed line
     res.fitBounds([g,a],{padding:[40,40]}); //fit map bounds
 
+    // credit to Doctor Stanley H[Wh]oo blackjack.js animateBalanceChange
+    const ptsSpan = document.getElementById('pts');
+    const ptsTarget = roundPts; 
+    let current = 0;
+    const inc = Math.max(1, Math.round(ptsTarget / 50)); 
+
+    const tick = setInterval(() => {
+        current += inc;
+        if (current >= ptsTarget) {
+            current = ptsTarget;
+            clearInterval(tick);
+        }
+        ptsSpan.textContent = current;
+    }, 20); 
+
     const nextBtn=document.getElementById('nextBtn');
     nextBtn.hidden=false;
     nextBtn.onclick=()=>{
         document.querySelector('input[name="next"]').disabled=false;
         document.getElementById('guessForm').submit();
     };
-}
-
-function animatePoints(amount) {
-  const scoreElement = document.getElementById("score");
-  let currentScore = parseInt(scoreElement.innerText);
-  const total = document.getElementById("total")
-
-  const scoreOffset = scoreElement.getBoundingClientRect();
-  const centerX = window.innerWidth / 2;
-  const centerY = window.innerHeight / 2;
-
-
-
-  // right now this moves score from center of screen (not sure if we want this yet)
-  setTimeout(() => {
-    score.style.transition = "transform 1.5s ease-out, opacity 1s ease-out";
-    if (amount > 0) {
-      score.style.transform = `translate(${balanceOffset.left - centerX}px, ${balanceOffset.top - centerY}px)`;
-    } else {
-      score.style.transform = `translate(${centerX - balanceOffset.left}px, ${centerY - balanceOffset.top}px)`;
-    }
-      score.style.opacity = "0";
-    }, 50);
 }
 
 // Adapted from: MODEL: ChatGPT 4o TIME: 2025-05-24 6:45PM
