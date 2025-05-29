@@ -95,14 +95,15 @@ def add_score(username, points, distance, mode="untimed",  region="nyc"):
     conn.close()
     return True
 
-def import_csv_to_loc(region, csv_path):
+def import_csv_to_loc(region, csv_path, sample: int=500):
     conn = get_db_connection()
     cur  = conn.cursor()
 
     with open(csv_path, newline='') as f:
         reader = csv.reader(f)
-        next(reader, None)                
-        for row in reader:
+        next(reader, None)
+        rows = list(reader)                
+        for row in random.sample(rows, min(sample, len(rows))):
             lon = float(row[0])            
             lat = float(row[1])            
             cur.execute(
@@ -112,11 +113,11 @@ def import_csv_to_loc(region, csv_path):
     conn.commit()
     conn.close()
 
-def import_folder_to_loc(region, folder_path):
+def import_folder_to_loc(region, folder_path, sample: int=500):
     for file in os.listdir(folder_path):       
         if file.lower().endswith(".csv"):     
             csv_path = os.path.join(folder_path, file)
-            import_csv_to_loc(region, csv_path)
+            import_csv_to_loc(region, csv_path, sample)
 
 #gets random location, this is also subject to change with the use of Google Geocoding API in order to avoid unintellgible coords
 def getRandLoc(region="nyc"):
