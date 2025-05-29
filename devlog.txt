@@ -125,3 +125,10 @@ alexL -- 2025-05-25 17:30
 alexL -- 2025-05-25 18:45
 * optimized importing regions by making it such that you can just import a folder of csvs(the locs)
 * fixed points system for each region (before it was working only for NYC)
+
+alexL -- 2025-05-27 22:00?
+* added score animation for each round
+
+alexL -- 2025-05-28 21:30
+* made it such that minimap begins over the region being played on by adjusting view
+* replaced auth with just landing and improved nav bar
