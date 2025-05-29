@@ -18,16 +18,12 @@
     <h1 style="text-align:center;margin-top:2.5rem">Welcome to DevoGuessr!</h1>
 
     <div class="auth-wrapper">
-      <!-- Log In -->
+      <!-- Register -->
       <form class="auth-card" method="post" action="{{ url_for('auth') }}">
-        <h2>Log In</h2>
-        {% with msgs = get_flashed_messages() %}
-          {% if msgs %}<p style="color:#ffaaaa;text-align:center">{{ msgs[0] }}</p>{% endif %}
-        {% endwith %}
+        <h2>Create Account</h2>
         <label>Username</label><input name="username" required>
         <label>Password</label><input type="password" name="password" required>
-        <button type="submit" name="login">Log In</button>
-      </form>
+        <button type="submit" name="register">Register</button>
       </form>
     </div>
   </body>
