@@ -4,6 +4,12 @@
     gap:1rem;
     flex-wrap:wrap;
 }
+
+.mode-buttons form {
+    display: inline-block;
+    margin: 0;
+}
+
 .mode-btn{
     padding:.6rem 1.2rem;
     background:white;
@@ -13,6 +19,7 @@
     border-radius:6px;
     font-weight:bold;
     transition:background .2s, color .2s;
+    cursor: pointer;
 }
 
 .mode-btn:hover,

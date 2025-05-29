@@ -1,0 +1,82 @@
+body {
+  background-color: lightslategray;
+  color: white;
+}
+
+body, html {
+  max-width: 100%;
+  height: auto;
+  width: auto\9;
+}
+
+/*nav*/
+nav {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1rem 2rem;
+  background-color: rgba(0,0,0,.25);
+  border-bottom: 1px solid rgba(255,255,255,.25);
+}
+
+nav a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.auth-wrapper {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 3rem;
+  margin-top: 2rem;
+  padding: 0 2rem;
+}
+
+.auth-card {
+  flex: 1 1 320px;
+  max-width: 380px;
+  background-color: rgba(0,0,0,.25);
+  padding: 2rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,.25);
+}
+
+.auth-card h2 {
+  margin: 0 0 1rem;
+  text-align: center;
+  font-weight: 600;
+}
+
+.auth-card label {
+  display: block;
+  margin: .75rem 0 .25rem;
+  font-weight: 600;
+}
+
+.auth-card input {
+  width: 100%;
+  padding: .6rem .75rem;
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: 8px;
+  background: rgba(255,255,255,.1);
+  color: white;
+}
+
+.auth-card button {
+  width: 100%;
+  padding: .6rem .75rem;
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: 8px;
+  background: rgba(0,0,0,.25);
+  color: white;
+  margin-top: 1.5rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform 0.25s;
+}
+
+.auth-card button:hover {
+  transform: scale(1.02);
+}
+  

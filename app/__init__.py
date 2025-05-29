@@ -75,18 +75,18 @@ def check_guess():
 
 @app.route("/")
 def landing():
+    if "username" in session:
+        return render_template("home.html", username=session["username"])
     return render_template("landing.html")
 
 @app.route("/home")
 def home():
-    if "username" not in session:
-        return redirect(url_for("auth"))
-    return render_template("home.html", username=session["username"])
+    return render_template("home.html", username=session.get("username"))
 
 @app.route("/results/<mode>/<region>")
 def results(mode, region):
     if "results" not in session:
-        return redirect(url_for("home"))
+        return render_template("home.html", username=session.get("username"))
     data = session["results"]
     return render_template(
         "results.html",finished=True,history=data["history"],
@@ -99,7 +99,7 @@ def results(mode, region):
 @app.route("/play/<mode>/<region>", methods=["GET","POST"])
 def play(mode, region):
     if "username" not in session:
-        return redirect(url_for("auth"))
+        return redirect(url_for("landing"))
     
     if "fresh" in request.args:                          
         for k in ("round", "location", "history", "expires", "mode", "region"):
@@ -233,12 +233,13 @@ def leave_game():
         session.pop(k, None)          
     return redirect(url_for("region_page", region=region))
 
-@app.route("/region/<region>")
+@app.route("/region/<region>", methods=["GET", "POST"])
 def region_page(region):
-    if "username" not in session:
-        return redirect(url_for("auth"))
-    scores = db.top_scores(region)[:25]      
-    return render_template("region.html",region=region,scores=scores,username=session["username"])
+    scores = db.top_scores(region)[:25]
+    username = session.get("username")
+    if request.method == "POST" and not username:
+        flash("You must be logged in to play")
+    return render_template("region.html", region=region, scores=scores, username=username)
 
 #leaderboard route
 @app.route("/leaderboard")
@@ -252,7 +253,7 @@ def leaderboard(region="nyc"):
 @app.route("/profile")
 def profile():
     if "username" not in session:
-        return redirect(url_for("auth"))
+        return redirect(url_for("landing"))
     return render_template("profile.html", games=session.get("games", []))
 
 # auth  and logout routes
@@ -272,12 +273,12 @@ def auth():
                 return redirect(url_for("home"))
             flash("Username already taken!")
 
-    return render_template("auth.html")
+    return redirect(url_for("landing"))
 
 @app.route('/logout')
 def logout():
     session.pop('username', None)
-    return redirect(url_for('auth'))
+    return redirect(url_for("landing"))
 
 if __name__ == "__main__":
     app.debug = True

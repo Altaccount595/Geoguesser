@@ -10,20 +10,36 @@
 <body>
   <nav>
     <a href="{{ url_for('home') }}">Home</a>
-    <a href="{{ url_for('profile') }}">Profile</a>
-    <a href="{{ url_for('logout') }}">Logout</a>
+    {% if username %}
+      <a href="{{ url_for('profile') }}">Profile</a>
+      <a href="{{ url_for('logout') }}">Logout</a>
+    {% else %}
+      <a href="{{ url_for('landing') }}">Login / Register</a>
+    {% endif %}
   </nav>
 
   <h1>{{ region|title }}</h1>
 
-  <div class="mode-buttons">
-    <a class="mode-btn"href="{{ url_for('play', mode='untimed', region=region, fresh=1) }}">
-       Untimed
-    </a>
+  {% with msgs = get_flashed_messages() %}
+    {% if msgs %}<p style="color:#ffaaaa;text-align:center">{{ msgs[0] }}</p>{% endif %}
+  {% endwith %}
 
-    <a class="mode-btn"href="{{ url_for('play', mode='timed', region=region, fresh=1) }}">
-       Timed (60 s/round)
-    </a>
+  <div class="mode-buttons">
+    {% if username %}
+      <a class="mode-btn" href="{{ url_for('play', mode='untimed', region=region, fresh=1) }}">
+        Untimed
+      </a>
+      <a class="mode-btn" href="{{ url_for('play', mode='timed', region=region, fresh=1) }}">
+        Timed (60 s/round)
+      </a>
+    {% else %}
+      <form method="POST" style="margin:0">
+        <button type="submit" class="mode-btn">Untimed</button>
+      </form>
+      <form method="POST" style="margin:0">
+        <button type="submit" class="mode-btn">Timed (60 s/round)</button>
+      </form>
+    {% endif %}
   </div>
 
   <h2>Top 25</h2>
