@@ -100,8 +100,8 @@ def results(mode, region):
 def play(mode, region):
     if "username" not in session:
         return redirect(url_for("landing"))
-    
-    if "fresh" in request.args:                          
+
+    if "fresh" in request.args:
         for k in ("round", "location", "history", "expires", "mode", "region"):
             session.pop(k, None)
 
@@ -228,9 +228,9 @@ def play(mode, region):
 #leave game
 @app.route("/leave", methods=["POST", "GET"])
 def leave_game():
-    region = request.form.get("region", "nyc") 
+    region = request.form.get("region", "nyc")
     for k in ("round", "location", "history", "expires", "mode"):
-        session.pop(k, None)          
+        session.pop(k, None)
     return redirect(url_for("region_page", region=region))
 
 @app.route("/region/<region>", methods=["GET", "POST"])
