@@ -10,8 +10,15 @@ const {
     pts: roundPts
 } = window.gameData;
 
-
-var map = L.map('mini').setView([40, -95], 4);
+const regionView = {
+    nyc:    { center:[40.7128, -74.0060], zoom: 11 },   
+    europe: { center:[54.5, 15.0], zoom: 4 },   
+    us:     { center: [39.5, -98.35 ], zoom: 4 },   
+    global: { center: [20, 0], zoom: 2 }    
+};
+  
+const { center, zoom } = regionView[region] || regionView.global;
+var map = L.map('mini').setView(center, zoom);
 
 const guessBtn = document.getElementById('guessBtn');
 var lat = 0
