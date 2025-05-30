@@ -132,3 +132,7 @@ alexL -- 2025-05-27 22:00?
 alexL -- 2025-05-28 21:30
 * made it such that minimap begins over the region being played on by adjusting view
 * replaced auth with just landing and improved nav bar
+
+alexL -- 2025-05-29 22:00
+* imported US and Europe into database (not served on droplet yet)
+* refined landing page 
