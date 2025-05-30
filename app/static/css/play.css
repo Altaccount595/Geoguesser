@@ -32,8 +32,8 @@ body {
 /*hover effects on mini map*/
 #mini-container.enlarged {
     transition-delay: all 0.3s ease;
-    width: 600px;
-    height: 400px;
+    width: 40%;
+    height: 50%;
     opacity: 1;
 }
 /*fills screen with result*/
