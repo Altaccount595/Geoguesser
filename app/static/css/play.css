@@ -27,15 +27,14 @@ body {
 #mini {
   width: 100%;
   height: 100%;
+  transition: transform 0.3s ease;
 }
 /*hover effects on mini map*/
-#mini-container:hover{
-  transition-delay: 200ms, 200ms;
-  transition-property: width, height;
-  width: 600px;
-  height: 400px;
-  /*background-color: rgba(0,0,0,0.9);*/
-  opacity: 1;
+#mini-container.enlarged {
+    transition-delay: all 0.3s ease;
+    width: 600px;
+    height: 400px;
+    opacity: 1;
 }
 /*fills screen with result*/
 #resultMap {
@@ -137,3 +136,4 @@ nav { display:none; }
   z-index: 1102;
   border-radius: 6px;
 }
+

@@ -10,7 +10,7 @@ def images_are_equal(img1_path, img2_path):
     img1 = Image.open(img1_path).convert('RGB')
     img2 = Image.open(img2_path).convert('RGB')
     return np.array_equal(np.array(img1), np.array(img2))
-
+ 
 def address_lat():
 	address = getRandAddress()
 	key=getKey()

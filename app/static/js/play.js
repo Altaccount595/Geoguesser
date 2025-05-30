@@ -37,6 +37,20 @@ container.addEventListener('transitionend', () => {   //hover stuff (hopefully i
     map.invalidateSize();
 });
 
+const miniContainer = document.getElementById('mini-container');
+let shrinkTimeout;
+
+miniContainer.addEventListener('mouseenter', () => {
+    clearTimeout(shrinkTimeout); // Cancel any pending shrink
+    miniContainer.classList.add('enlarged');
+});
+
+miniContainer.addEventListener('mouseleave', () => {
+    shrinkTimeout = setTimeout(() => {
+        miniContainer.classList.remove('enlarged');
+    }, 500); // Delay shrinking by 500ms
+});
+
 map.on('click', function(e) {
     L.popup({closeButton: false})
         .setLatLng(e.latlng)
