@@ -257,7 +257,7 @@ def profile():
     return render_template("profile.html", games=session.get("games", []))
 
 # auth  and logout routes
-@app.route('/auth', methods=["GET", "POST"])
+@app.route("/auth", methods=["GET", "POST"])
 def auth():
     if request.method == "POST":
         username = request.form["username"]
@@ -274,6 +274,12 @@ def auth():
             flash("Username already taken!")
 
     return redirect(url_for("landing"))
+
+@app.route('/createAccount')
+def createAccount():
+    if "username" in session:
+        return redirect(url_for("home"))
+    return render_template("createAccount.html")
 
 @app.route('/logout')
 def logout():
