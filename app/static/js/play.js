@@ -11,12 +11,13 @@ const {
 } = window.gameData;
 
 const regionView = {
-    nyc:    { center:[40.7128, -74.0060], zoom: 11 },   
-    europe: { center:[54.5, 15.0], zoom: 4 },   
-    us:     { center: [39.5, -98.35 ], zoom: 4 },   
-    global: { center: [20, 0], zoom: 2 }    
+    nyc:    { center:[40.7128, -74.0060], zoom: 11 },
+    europe: { center:[54.5, 15.0], zoom: 4 },
+    us:     { center: [39.5, -98.35 ], zoom: 4 },
+    asia:   { center: [34.0, 100.62], zoom: 3},
+    global: { center: [20, 0], zoom: 2 }
 };
-  
+
 const { center, zoom } = regionView[region] || regionView.global;
 var map = L.map('mini').setView(center, zoom);
 
@@ -85,9 +86,9 @@ if (guessed){
 
     // credit to Doctor Stanley H[Wh]oo blackjack.js animateBalanceChange
     const ptsSpan = document.getElementById('pts');
-    const ptsTarget = roundPts; 
+    const ptsTarget = roundPts;
     let current = 0;
-    const inc = Math.max(1, Math.round(ptsTarget / 50)); 
+    const inc = Math.max(1, Math.round(ptsTarget / 50));
 
     const tick = setInterval(() => {
         current += inc;
@@ -96,7 +97,7 @@ if (guessed){
             clearInterval(tick);
         }
         ptsSpan.textContent = current;
-    }, 20); 
+    }, 20);
 
     const nextBtn=document.getElementById('nextBtn');
     nextBtn.hidden=false;
