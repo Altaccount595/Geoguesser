@@ -99,7 +99,7 @@ def import_csv_to_loc(region, csv_path, sample: int=500):
     conn = get_db_connection()
     cur  = conn.cursor()
 
-    with open(csv_path, newline='') as f:
+    with open(csv_path, newline='', encoding='utf-8', errors='replace') as f:
         reader = csv.reader(f)
         next(reader, None)
         rows = list(reader)                

@@ -72,6 +72,7 @@ nav a {
   border-radius: 8px;
   background: rgba(255,255,255,.2);
   color: white;
+  box-sizing: border-box;
 }
 
 .auth-card button {
@@ -85,6 +86,7 @@ nav a {
   cursor: pointer;
   font-weight: 600;
   transition: transform 0.25s;
+  box-sizing: border-box;
 }
 
 .auth-card button:hover {
