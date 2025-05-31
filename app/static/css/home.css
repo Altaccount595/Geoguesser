@@ -1,6 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
 body {
   background-color: lightslategray;
-  color: white
+  color: white;
+  font-family: 'Inter', sans-serif
 }  
 #map { height: 500px; width: 45%; float: right}
 body, html {

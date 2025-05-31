@@ -69,7 +69,7 @@ map.on('click', function(e) {
 
 guessBtn.onclick=()=>document.getElementById('guessForm').submit();
 
-if (mode === 'timed' && !guessed) {
+if (mode === 'timed' && !guessed && remaining > 0) {
     (function(){
         let t = remaining;
         const box = document.getElementById('timer');

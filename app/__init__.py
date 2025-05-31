@@ -101,12 +101,17 @@ def play(mode, region):
     if "username" not in session:
         return redirect(url_for("landing"))
 
+    # Get timer value from request, default to 60 seconds
+    timer_seconds = int(request.args.get('timer', 60))
+    # Get move mode from request, default to 'move' (can move around)
+    move_mode = request.args.get('move', 'move')
+    
     if "fresh" in request.args:
-        for k in ("round", "location", "history", "expires", "mode", "region"):
+        for k in ("round", "location", "history", "expires", "mode", "region", "timer_seconds", "move_mode"):
             session.pop(k, None)
 
     if "round" in session and (session.get("mode") != mode or session.get("region") != region):
-        for k in ("round", "location", "history", "expires", "mode", "region"):
+        for k in ("round", "location", "history", "expires", "mode", "region", "timer_seconds", "move_mode"):
             session.pop(k, None)
 
     if "round" not in session:
@@ -115,14 +120,16 @@ def play(mode, region):
             {
                 "region": region,"mode": mode,
                 "round": 1,"history": [],
-                "location": {"lat": lat, "long": lon, "heading": 0}
+                "location": {"lat": lat, "long": lon, "heading": 0},
+                "timer_seconds": timer_seconds,
+                "move_mode": move_mode
             }
         )
-        if mode == "timed":
-            session["expires"] = time.time() + 60
+        if mode == "timed" and timer_seconds > 0:
+            session["expires"] = time.time() + timer_seconds
         session.modified = True
 
-    if session["mode"] == "timed" and time.time() > session.get("expires", 0):
+    if session["mode"] == "timed" and session.get("timer_seconds", 60) > 0 and time.time() > session.get("expires", float('inf')):
         session["history"].append((max_distance(region), 0))
         session["round"] += 1
 
@@ -141,14 +148,15 @@ def play(mode, region):
                 "total": total,
                 "mode": session["mode"]
             }
-            for k in ("round", "location", "history", "expires", "mode"):
+            for k in ("round", "location", "history", "expires", "mode", "timer_seconds", "move_mode"):
                 session.pop(k, None)
             return redirect(url_for("results", mode=mode, region=region))
         lat, lon = getRandLoc(region)
         session["location"] = {"lat": lat, "long": lon, "heading": 0}
-        session["expires"] = time.time() + 60
+        if session.get("timer_seconds", 60) > 0:
+            session["expires"] = time.time() + session["timer_seconds"]
         session.modified = True
-        return redirect(url_for("play", mode=mode, region=region))
+        return redirect(url_for("play", mode=mode, region=region, timer=session.get("timer_seconds", 60), move=session.get("move_mode", 'move')))
 
     if request.method == "POST":
         if "input" in request.form and "next" not in request.form:
@@ -174,7 +182,8 @@ def play(mode, region):
                 total=sum(p for _,p in session["history"]),
                 map_key=getKey(),
                 mode=session["mode"],
-                region=region
+                region=region,
+                move_mode=session.get("move_mode", 'move'),
             )
 
         if "next" in request.form:
@@ -195,20 +204,20 @@ def play(mode, region):
                     "total": total,
                     "mode":session["mode"]
                 }
-                for k in ("round","location","history","expires","mode"):
+                for k in ("round","location","history","expires","mode", "timer_seconds", "move_mode"):
                     session.pop(k, None)
                 return redirect(url_for("results", mode=mode, region=region))
 
             lat,lon = getRandLoc(region)
             session["location"] = {"lat": lat, "long": lon, "heading": 0}
-            if session["mode"] == "timed":
-                session["expires"] = time.time() + 60
+            if session["mode"] == "timed" and session.get("timer_seconds", 60) > 0:
+                session["expires"] = time.time() + session["timer_seconds"]
             session.modified = True
 
-            return redirect(url_for("play", mode=mode, region=region))
+            return redirect(url_for("play", mode=mode, region=region, timer=session.get("timer_seconds", 60), move=session.get("move_mode", 'move')))
 
     remaining = None
-    if session["mode"] == "timed":
+    if session["mode"] == "timed" and session.get("timer_seconds", 60) > 0:
         remaining = max(0, math.ceil(session["expires"] - time.time()))
 
     return render_template(
@@ -223,13 +232,14 @@ def play(mode, region):
         mode=session["mode"],
         remaining_time=remaining,
         region=region,
+        move_mode=session.get("move_mode", 'move'),
     )
 
 #leave game
 @app.route("/leave", methods=["POST", "GET"])
 def leave_game():
     region = request.form.get("region", "nyc")
-    for k in ("round", "location", "history", "expires", "mode"):
+    for k in ("round", "location", "history", "expires", "mode", "timer_seconds", "move_mode"):
         session.pop(k, None)
     return redirect(url_for("region_page", region=region))
 

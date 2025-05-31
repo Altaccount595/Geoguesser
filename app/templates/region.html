@@ -24,23 +24,30 @@
     {% if msgs %}<p style="color:#ffaaaa;text-align:center">{{ msgs[0] }}</p>{% endif %}
   {% endwith %}
 
-  <div class="mode-buttons">
-    {% if username %}
-      <a class="mode-btn" href="{{ url_for('play', mode='untimed', region=region, fresh=1) }}">
-        Untimed
-      </a>
-      <a class="mode-btn" href="{{ url_for('play', mode='timed', region=region, fresh=1) }}">
-        Timed (60 s/round)
-      </a>
-    {% else %}
-      <form method="POST" style="margin:0">
-        <button type="submit" class="mode-btn">Untimed</button>
-      </form>
-      <form method="POST" style="margin:0">
-        <button type="submit" class="mode-btn">Timed (60 s/round)</button>
-      </form>
-    {% endif %}
+  <!-- region image banner -->
+  <div class="region-banner">
+    <img src="{{ url_for('static', filename='img/' + region + '.jpg') }}" alt="{{ region|title }}">
   </div>
+
+  <!-- game mode selector bar -->
+  {% if username %}
+  <div class="game-mode-bar">
+    <div class="mode-group">
+      <button type="button" class="mode-selector active" data-mode="move" data-group="movement">Move</button>
+      <button type="button" class="mode-selector" data-mode="nomove" data-group="movement">No Move</button>
+    </div>
+    <div class="timer-section">
+      <span class="timer-label">Choose Time:</span>
+      <input type="range" id="timerRange" min="0" max="600" step="30" value="0">
+      <span id="timerValue">No limit</span>
+    </div>
+    <button type="button" class="play-btn" id="playBtn">PLAY</button>
+  </div>
+  {% else %}
+  <div class="game-mode-bar">
+    <p style="color: white;">You must be logged in to play</p>
+  </div>
+  {% endif %}
 
   <h2>Top 25</h2>
   <table>
@@ -54,5 +61,12 @@
       </tr>
     {% endfor %}
   </table>
+
+  <script>
+    window.regionData = {
+      region: "{{ region }}"
+    };
+  </script>
+  <script src="{{ url_for('static', filename='js/region.js') }}"></script>
 </body>
 </html>

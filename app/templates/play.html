@@ -17,7 +17,7 @@
     </div>
 
     <!--shows remaining time for timed mode-->
-    {% if mode == 'timed'%}
+    {% if mode == 'timed' and remaining_time %}
       <div id="timer">{{ remaining_time }}</div>
     {% endif %}
 
@@ -48,18 +48,30 @@
       // • expose position to logs
         window.initStreetView = function () {
           const loc = { lat: {{ lat|float }}, lng: {{ lon|float }} };
+          const moveMode = "{{ move_mode|default('move') }}";
+          
+          const panoramaOptions = {
+            position: loc,
+            pov: { heading: 0, pitch: 0 },
+            zoom: 1,
+            disableDefaultUI: true,
+            showRoadLabels: false
+          };
+          
+          // Disable movement if in 'no move' mode
+          if (moveMode === 'nomove') {
+            panoramaOptions.linksControl = false;
+            panoramaOptions.panControl = false;
+            panoramaOptions.clickToGo = false;
+            panoramaOptions.scrollwheel = false;
+            panoramaOptions.disableDoubleClickZoom = true;
+          }
 
           new google.maps.StreetViewPanorama(
             document.getElementById('pano'),
-              {
-                position: loc,
-                pov: { heading: 0, pitch: 0 },
-                zoom: 1,
-                disableDefaultUI: true,
-                showRoadLabels: false
-              }
-            );
-          };
+            panoramaOptions
+          );
+        };
       </script>
       <script src="https://maps.googleapis.com/maps/api/js?key={{ map_key }}&callback=initStreetView"></script>
     {% endif %}
@@ -75,7 +87,8 @@
         guessLat: {{ guess_lat|default(none)|tojson }},
         guessLon: {{ guess_lon|default(none)|tojson }},
         region: {{ region|tojson }},
-        pts: {{ pts|default(0)|int }}
+        pts: {{ pts|default(0)|int }},
+        moveMode: {{ move_mode|default('move')|tojson }}
       };
     </script>
 
