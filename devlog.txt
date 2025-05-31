@@ -136,3 +136,9 @@ alexL -- 2025-05-28 21:30
 alexL -- 2025-05-29 22:00
 * imported US and Europe into database (not served on droplet yet)
 * refined landing page 
+
+alexL -- 2025-05-30 20:00
+* added oceania, asia (no locs yet)
+* added no move/move buttons and ability to choose time w/ a play button
+* revamped css for regions page
+* new font

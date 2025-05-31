@@ -32,7 +32,6 @@ REGION_MAX_DISTANCE = {
 POINT_CAP = 5000
 
 app = Flask(__name__)
-
 app.secret_key = os.urandom(32)
 
 #db.create_db()
@@ -62,6 +61,10 @@ def max_distance(region):
     return REGION_MAX_DISTANCE.get(region, REGION_MAX_DISTANCE["global"])
 
 def check_guess():
+    """
+    Process a user's guess and calculate distance from actual location
+    Returns distance in kilometers
+    """
     loc = (request.form.get('input'))
     split = loc.split(", ")
     lat = float(split[0])
@@ -71,7 +74,7 @@ def check_guess():
     dist = haversine(guess[0], guess[1], answer[0], answer[1])
     return dist
 
-# home route
+# Route Handlers
 
 @app.route("/")
 def landing():
@@ -98,6 +101,19 @@ def results(mode, region):
 @app.route("/play/<region>", methods=["GET", "POST"], defaults={"mode": "untimed"})
 @app.route("/play/<mode>/<region>", methods=["GET","POST"])
 def play(mode, region):
+    """
+    Main game route handling:
+    - Game initialization
+    - Timer management for timed mode
+    - Processing user guesses
+    - Score calculation
+    - Round progression
+    - Game completion
+    
+    Parameters:
+    - mode: Game mode ('timed' or 'untimed')
+    - region: Game region ('nyc', 'us', 'europe', 'global')
+    """
     if "username" not in session:
         return redirect(url_for("landing"))
 
@@ -106,6 +122,7 @@ def play(mode, region):
     # Get move mode from request, default to 'move' (can move around)
     move_mode = request.args.get('move', 'move')
     
+    # Reset game state for fresh games or region/mode changes
     if "fresh" in request.args:
         for k in ("round", "location", "history", "expires", "mode", "region", "timer_seconds", "move_mode"):
             session.pop(k, None)
@@ -114,6 +131,7 @@ def play(mode, region):
         for k in ("round", "location", "history", "expires", "mode", "region", "timer_seconds", "move_mode"):
             session.pop(k, None)
 
+    # Initialize new game
     if "round" not in session:
         lat,lon = getRandLoc(region)
         session.update(
@@ -129,6 +147,7 @@ def play(mode, region):
             session["expires"] = time.time() + timer_seconds
         session.modified = True
 
+    # Handle timer expiration
     if session["mode"] == "timed" and session.get("timer_seconds", 60) > 0 and time.time() > session.get("expires", float('inf')):
         session["history"].append((max_distance(region), 0))
         session["round"] += 1
@@ -158,6 +177,7 @@ def play(mode, region):
         session.modified = True
         return redirect(url_for("play", mode=mode, region=region, timer=session.get("timer_seconds", 60), move=session.get("move_mode", 'move')))
 
+    # Handle POST requests (user guesses and next round)
     if request.method == "POST":
         if "input" in request.form and "next" not in request.form:
             dist = check_guess()
@@ -235,9 +255,9 @@ def play(mode, region):
         move_mode=session.get("move_mode", 'move'),
     )
 
-#leave game
 @app.route("/leave", methods=["POST", "GET"])
 def leave_game():
+    """clears game state and returns to region page"""
     region = request.form.get("region", "nyc")
     for k in ("round", "location", "history", "expires", "mode", "timer_seconds", "move_mode"):
         session.pop(k, None)
@@ -251,24 +271,23 @@ def region_page(region):
         flash("You must be logged in to play")
     return render_template("region.html", region=region, scores=scores, username=username)
 
-#leaderboard route
 @app.route("/leaderboard")
 @app.route("/leaderboard/<region>")
 def leaderboard(region="nyc"):
+    """Display leaderboard for specified region (defaults to NYC)"""
     scores = db.top_scores(region)
     return render_template("leaderboard.html", scores=scores, region=region)
 
-#profile route
-
 @app.route("/profile")
 def profile():
+    """Display user profile with game history"""
     if "username" not in session:
         return redirect(url_for("landing"))
     return render_template("profile.html", games=session.get("games", []))
 
-# auth  and logout routes
 @app.route("/auth", methods=["GET", "POST"])
 def auth():
+    """Handles user authentication"""
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
@@ -282,7 +301,6 @@ def auth():
                 session["username"] = username
                 return redirect(url_for("home"))
             flash("Username already taken!")
-
     return redirect(url_for("landing"))
 
 @app.route('/createAccount')
