@@ -157,7 +157,8 @@ def play(mode, region):
             add_score(
                 session["username"], points=total,
                 distance=sum(d for d, _ in session["history"]),
-                mode=session["mode"], region=region
+                mode=session["mode"], region=region,
+                move_mode=session.get("move_mode", "move")
             )
             session.setdefault("games", []).append(
                 {"scores": session["history"][:], "total": total}
@@ -216,7 +217,8 @@ def play(mode, region):
                     points=total,
                     distance=sum(d for d, _ in session["history"]),
                     mode=session["mode"],
-                    region=region
+                    region=region,
+                    move_mode=session.get("move_mode", "move")
                 )
                 session.setdefault("games", []).append({"scores": session["history"][:],"total":  total })
                 session["results"] = {
@@ -265,11 +267,13 @@ def leave_game():
 
 @app.route("/region/<region>", methods=["GET", "POST"])
 def region_page(region):
-    scores = db.top_scores(region)[:25]
+    move_scores = db.top_scores(region, move_mode="move")[:25]
+    nomove_scores = db.top_scores(region, move_mode="nomove")[:25]
+    
     username = session.get("username")
     if request.method == "POST" and not username:
         flash("You must be logged in to play")
-    return render_template("region.html", region=region, scores=scores, username=username)
+    return render_template("region.html", region=region, move_scores=move_scores, nomove_scores=nomove_scores, username=username)
 
 @app.route("/leaderboard")
 @app.route("/leaderboard/<region>")

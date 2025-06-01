@@ -36,8 +36,10 @@ def create_db():
             user_id INTEGER NOT NULL,
             region TEXT NOT NULL,
             mode TEXT NOT NULL DEFAULT 'untimed',
+            move_mode TEXT NOT NULL DEFAULT 'move',
             points INTEGER NOT NULL,
-            distance REAL NOT NULL
+            distance REAL NOT NULL,
+            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
 	);
 
 	CREATE TABLE IF NOT EXISTS loc (
@@ -78,7 +80,7 @@ def check_user(username, password):
     return row and check_password_hash(row["password_hash"], password)
 
 # adds users scores
-def add_score(username, points, distance, mode="untimed",  region="nyc"):
+def add_score(username, points, distance, mode="untimed", region="nyc", move_mode="move"):
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute("SELECT user_id FROM users WHERE username = ?", (username,))
@@ -87,10 +89,12 @@ def add_score(username, points, distance, mode="untimed",  region="nyc"):
         conn.close()
         return False
     user_id = id["user_id"]
+    
     cur.execute(
-        "INSERT INTO scores (user_id, region, mode, points, distance) VALUES (?, ?, ?, ?, ?)",
-        (user_id, region, mode, points, distance,)
+        "INSERT INTO scores (user_id, region, mode, move_mode, points, distance) VALUES (?, ?, ?, ?, ?, ?)",
+        (user_id, region, mode, move_mode, points, distance,)
     )
+    
     conn.commit()
     conn.close()
     return True
@@ -137,18 +141,28 @@ def getRandLoc(region="nyc"):
     return [row["lat"], row["long"]]
 
 #gets top scores to serve to leaderboard
-def top_scores(region="nyc"):
+def top_scores(region="nyc", move_mode=None):
     conn = get_db_connection()
     cur  = conn.cursor()
 
-    cur.execute("""
-        SELECT u.username, s.points, s.distance
-        FROM scores AS s
-        JOIN users AS u ON u.user_id = s.user_id
-        WHERE s.region = ?
-        ORDER BY s.points DESC, s.distance ASC
-        LIMIT 30;
-    """, (region,))
+    if move_mode:
+        cur.execute("""
+            SELECT u.username, s.points, s.distance, s.timestamp
+            FROM scores AS s
+            JOIN users AS u ON u.user_id = s.user_id
+            WHERE s.region = ? AND s.move_mode = ?
+            ORDER BY s.points DESC, s.distance ASC
+            LIMIT 25;
+        """, (region, move_mode))
+    else:
+        cur.execute("""
+            SELECT u.username, s.points, s.distance, s.timestamp
+            FROM scores AS s
+            JOIN users AS u ON u.user_id = s.user_id
+            WHERE s.region = ?
+            ORDER BY s.points DESC, s.distance ASC
+            LIMIT 25;
+        """, (region,))
 
     rows = cur.fetchall()
     conn.close()

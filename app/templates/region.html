@@ -49,18 +49,38 @@
   </div>
   {% endif %}
 
-  <h2>Top 25</h2>
-  <table>
-    <tr><th>#</th><th>User</th><th>km off</th><th>Points</th></tr>
-    {% for row in scores %}
-      <tr>
-        <td>{{ loop.index }}</td>
-        <td>{{ row.username }}</td>
-        <td>{{ row.distance }}</td>
-        <td>{{ row.points }}</td>
-      </tr>
-    {% endfor %}
-  </table>
+  <h2>Top 25 Leaderboards</h2>
+  <div class="leaderboard-container">
+    <div class="leaderboard-section">
+      <h3>Movement Allowed</h3>
+      <table>
+        <tr><th>#</th><th>User</th><th>Points</th><th>Date</th></tr>
+        {% for row in move_scores %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ row.username }}</td>
+            <td>{{ row.points }}</td>
+            <td>{{ row.timestamp.strftime('%Y-%m-%d') }}</td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+    
+    <div class="leaderboard-section">
+      <h3>No Movement</h3>
+      <table>
+        <tr><th>#</th><th>User</th><th>Points</th><th>Date</th></tr>
+        {% for row in nomove_scores %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ row.username }}</td>
+            <td>{{ row.points }}</td>
+            <td>{{ row.timestamp.strftime('%Y-%m-%d') }}</td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
 
   <script>
     window.regionData = {
