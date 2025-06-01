@@ -14,7 +14,7 @@ import os
 import time
 
 import db
-from db import getRandLoc, add_score, top_scores
+from db import getRandLoc, add_score, top_scores, get_user_stats
 from api_handle import image, getKey
 
 #from .db import getRandLoc, add_score, top_scores
@@ -176,7 +176,10 @@ def play(mode, region):
         if session.get("timer_seconds", 60) > 0:
             session["expires"] = time.time() + session["timer_seconds"]
         session.modified = True
-        return redirect(url_for("play", mode=mode, region=region, timer=session.get("timer_seconds", 60), move=session.get("move_mode", 'move')))
+        if mode == "timed":
+            return redirect(url_for("play", mode=mode, region=region, timer=session.get("timer_seconds", 60), move=session.get("move_mode", 'move')))
+        else:
+            return redirect(url_for("play", mode=mode, region=region, move=session.get("move_mode", 'move')))
 
     # Handle POST requests (user guesses and next round)
     if request.method == "POST":
@@ -236,7 +239,10 @@ def play(mode, region):
                 session["expires"] = time.time() + session["timer_seconds"]
             session.modified = True
 
-            return redirect(url_for("play", mode=mode, region=region, timer=session.get("timer_seconds", 60), move=session.get("move_mode", 'move')))
+            if mode == "timed":
+                return redirect(url_for("play", mode=mode, region=region, timer=session.get("timer_seconds", 60), move=session.get("move_mode", 'move')))
+            else:
+                return redirect(url_for("play", mode=mode, region=region, move=session.get("move_mode", 'move')))
 
     remaining = None
     if session["mode"] == "timed" and session.get("timer_seconds", 60) > 0:
@@ -287,7 +293,16 @@ def profile():
     """Display user profile with game history"""
     if "username" not in session:
         return redirect(url_for("landing"))
-    return render_template("profile.html", games=session.get("games", []))
+    
+    username = session["username"]
+    stats = db.get_user_stats(username)
+    
+    return render_template("profile.html", username=username, stats=stats, games=session.get("games", []))
+
+@app.route("/information")
+def information():
+    """Display information page"""
+    return render_template("information.html", username=session.get("username"))
 
 @app.route("/auth", methods=["GET", "POST"])
 def auth():

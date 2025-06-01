@@ -9,13 +9,19 @@
 </head>
 <body>
   <nav>
-    <a href="{{ url_for('home') }}">Home</a>
-    {% if username %}
-      <a href="{{ url_for('profile') }}">Profile</a>
-      <a href="{{ url_for('logout') }}">Logout</a>
-    {% else %}
-      <a href="{{ url_for('landing') }}">Login</a>
-    {% endif %}
+    <div class="nav-left">
+      <a href="{{ url_for('home') }}">Home</a>
+    </div>
+    <div class="nav-right">
+      {% if username %}
+        <a href="{{ url_for('profile') }}">Profile</a>
+        <a href="{{ url_for('information') }}">ℹ</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+      {% else %}
+        <a href="{{ url_for('information') }}">ℹ</a>
+        <a href="{{ url_for('landing') }}">Login</a>
+      {% endif %}
+    </div>
   </nav>
 
   <h1>{{ region|title }}</h1>

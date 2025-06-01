@@ -176,4 +176,34 @@ def top_scores(region="nyc", move_mode=None):
     
     return formatted_rows
 
+def get_user_stats(username):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    cur.execute("SELECT user_id FROM users WHERE username = ?", (username,))
+    user = cur.fetchone()
+    if not user:
+        conn.close()
+        return None
+        
+    user_id = user["user_id"]
+    
+    cur.execute("""
+        SELECT 
+            COUNT(*) as completed_games,
+            AVG(points) as avg_score,
+            MAX(points) as max_score
+        FROM scores
+        WHERE user_id = ?
+    """, (user_id,))
+    
+    stats = cur.fetchone()
+    conn.close()
+    
+    return {
+        'completed_games': stats['completed_games'] or 0,
+        'avg_score': round(stats['avg_score'] or 0),
+        'max_score': stats['max_score'] or 0
+    }
+
     

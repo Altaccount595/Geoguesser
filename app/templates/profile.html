@@ -2,33 +2,46 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Profile</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
 </head>
 <body>
   <nav>
-    <a href="{{ url_for('home') }}">Home</a>
-    {% if session.get('username') %}
-      <a href="{{ url_for('profile') }}">Profile</a>
-      <a href="{{ url_for('logout') }}">Logout</a>
-    {% else %}
-      <a href="{{ url_for('landing') }}">Login</a>
-    {% endif %}
+    <div class="nav-left">
+      <a href="{{ url_for('home') }}">Home</a>
+    </div>
+    <div class="nav-right">
+      {% if session.get('username') %}
+        <a href="{{ url_for('profile') }}">Profile</a>
+        <a href="{{ url_for('information') }}">ℹ</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+      {% else %}
+        <a href="{{ url_for('information') }}">ℹ</a>
+        <a href="{{ url_for('landing') }}">Login</a>
+      {% endif %}
+    </div>
   </nav>
 
-  <h1>Your game history</h1>
+  <div class="profile-header">
+    <h1>{{ username }}</h1>
+  </div>
 
-  {% if games %}
-    {% for g in games %}
-      <h3>Game {{ loop.index }} — total {{ g.total }}</h3>
-      <table>
-        <tr><th>Round</th><th>km off</th><th>points</th></tr>
-        {% for i,j in g.scores %}
-          <tr><td>{{ loop.index }}</td><td>{{ i }}</td><td>{{ j }}</td></tr>
-        {% endfor %}
-      </table>
-    {% endfor %}
-  {% else %}
-    <p>No games played yet</p>
-  {% endif %}
+  <div class="stats-container">
+    <div class="stat-box">
+      <span class="stat-value">{{ stats.completed_games if stats else 0 }}</span>
+      <span class="stat-label"># of completed games</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-value">{{ stats.avg_score if stats else 0 }}</span>
+      <span class="stat-label"># avg score</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-value">{{ stats.max_score if stats else 0 }}</span>
+      <span class="stat-label"># max score</span>
+    </div>
+  </div>
+
+
 </body>
 </html>

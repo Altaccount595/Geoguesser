@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function() {
             let url = '/play/' + gameMode + '/' + region + '?fresh=1';
             url = url + '&move=' + userChoices.moveMode;
             
-            if (userChoices.timeInSeconds > 0) {
+            if (gameMode === 'timed' && userChoices.timeInSeconds > 0) {
                 url = url + '&timer=' + userChoices.timeInSeconds;
             }
             
