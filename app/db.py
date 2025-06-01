@@ -9,6 +9,7 @@ import csv
 import os
 import random
 import sqlite3
+from datetime import datetime
 
 DB_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "users.db")
 
@@ -166,4 +167,13 @@ def top_scores(region="nyc", move_mode=None):
 
     rows = cur.fetchall()
     conn.close()
-    return rows
+    
+    formatted_rows = []
+    for row in rows:
+        formatted_row = dict(row)
+        formatted_row['timestamp'] = datetime.strptime(row['timestamp'], '%Y-%m-%d %H:%M:%S')
+        formatted_rows.append(formatted_row)
+    
+    return formatted_rows
+
+    
