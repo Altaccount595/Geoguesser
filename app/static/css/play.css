@@ -70,12 +70,14 @@ nav { display:none; }
   right:10px;
   width:150px;
   height:75px;
-  background:#0009;
-  color:#fff;
+  background:rgba(0,0,0,0.8);
+  color:#00b4ff;
   padding:.2rem .7rem;
   z-index:1101;
   font-size: 50px;
-  text-align: center
+  text-align: center;
+  border: 1px solid rgba(0,180,255,0.3);
+  border-radius: 8px;
 }
 
 /*floating cog*/
@@ -96,8 +98,11 @@ nav { display:none; }
   padding:.4rem .8rem;
   border:none;
   border-radius:6px;
-  background:#c0392b;
+  background:#00b4ff;
   color:#fff;
+}
+#leaveBtn:hover{
+  background:#33c5ff;
 }
 #settingsMenu:hover #leaveBtn{
   display:block;
@@ -110,8 +115,9 @@ nav { display:none; }
   left:20px;
   display:flex;
   padding:4px 8px;
-  background:#2c2670;
+  background:rgba(0,0,0,0.8);
   color:#fff;
+  border: 1px solid rgba(0,180,255,0.3);
   border-radius:4px;
   z-index:1101;
 }
@@ -127,7 +133,8 @@ nav { display:none; }
 
 /*stats per round*/
 #roundStats{
-  background: #fff;
+  background: rgba(0,0,0,0.9);
+  color: #fff;
   padding: .3rem .7rem;
   position: fixed;
   bottom: 90px;
@@ -135,5 +142,6 @@ nav { display:none; }
   transform: translateX(-50%);
   z-index: 1102;
   border-radius: 6px;
+  border: 1px solid rgba(0,180,255,0.3);
 }
 

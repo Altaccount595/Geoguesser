@@ -14,7 +14,7 @@
     display: flex;
     gap: 20px;
     padding: 15px;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.8);
     margin-bottom: 20px;
 }
 
@@ -25,9 +25,9 @@
 
 .mode-selector {
     padding: .6rem 1.2rem;
-    background: white;
-    color: black;
-    border: 2px solid white;
+    background: #2a2a2a;
+    color: white;
+    border: 2px solid #00b4ff;
     border-radius: 6px;
     font-weight: bold;
     transition: background .2s, color .2s;
@@ -38,9 +38,9 @@
 .mode-selector:active,
 .mode-selector:focus,
 .mode-selector.active {
-    background: limegreen;
+    background: #00b4ff;
     color: white;
-    border-color: limegreen;
+    border-color: #00b4ff;
 }
 
 .timer-section {
@@ -58,9 +58,9 @@
 
 .play-btn {
     padding: .6rem 1.2rem;
-    background: limegreen;
+    background: #00b4ff;
     color: white;
-    border: 2px solid limegreen;
+    border: 2px solid #00b4ff;
     border-radius: 6px;
     font-weight: bold;
     transition: background .2s, color .2s;
@@ -71,17 +71,44 @@
 .play-btn:hover,
 .play-btn:active,
 .play-btn:focus {
-    background: #32cd32;
-    border-color: #32cd32;
+    background: #33c5ff;
+    border-color: #33c5ff;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
+    background: rgba(0, 0, 0, 0.5);
 }
 
 th, td {
     padding: 10px;
     text-align: left;
+    border-bottom: 1px solid rgba(0, 180, 255, 0.2);
+}
+
+th {
+    background: rgba(0, 180, 255, 0.2);
+    font-weight: bold;
+}
+
+.leaderboard-container {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.leaderboard-section {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 180, 255, 0.3);
+}
+
+.leaderboard-section h3 {
+    color: #00b4ff;
+    margin-bottom: 15px;
+    text-align: center;
 }
