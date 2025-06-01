@@ -146,3 +146,9 @@ alexL -- 2025-05-30 20:00
 alexL -- 2025-05-31 21:30
 * replaced light blue and white colors with blue and black
 * fixed leaderboard to show time, date, and points for both move/no move modes (will eventually add for other modes too)
+
+alexL -- 2025-06-01 16:20
+* added information page (for cred to geogusser)
+* made styling for round results uniform with rest of site
+* fixed profile to show # games played, max score, and avg score
+* fixed url builder bug (showed 60 seconds even for untimed)
