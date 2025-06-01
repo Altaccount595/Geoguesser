@@ -142,3 +142,7 @@ alexL -- 2025-05-30 20:00
 * added no move/move buttons and ability to choose time w/ a play button
 * revamped css for regions page
 * new font
+
+alexL -- 2025-05-31 21:30
+* replaced light blue and white colors with blue and black
+* fixed leaderboard to show time, date, and points for both move/no move modes (will eventually add for other modes too)
