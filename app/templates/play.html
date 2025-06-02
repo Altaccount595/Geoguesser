@@ -49,7 +49,7 @@
         window.initStreetView = function () {
           const loc = { lat: {{ lat|float }}, lng: {{ lon|float }} };
           const moveMode = "{{ move_mode|default('move') }}";
-          
+
           const panoramaOptions = {
             position: loc,
             pov: { heading: 0, pitch: 0 },
@@ -57,13 +57,12 @@
             disableDefaultUI: true,
             showRoadLabels: false
           };
-          
+
           // Disable movement if in 'no move' mode
           if (moveMode === 'nomove') {
             panoramaOptions.linksControl = false;
             panoramaOptions.panControl = false;
             panoramaOptions.clickToGo = false;
-            panoramaOptions.scrollwheel = false;
             panoramaOptions.disableDoubleClickZoom = true;
           }
 
@@ -96,7 +95,7 @@
 
     <div id="settingsMenu">
       <span id="cog" title="Game settings">⚙</span>
-    
+
       <form id="leaveForm" action="{{ url_for('leave_game') }}" method="POST">
         <input type="hidden" name="region" value="{{ region }}">
         <button id="leaveBtn" type="submit">Leave game</button>
