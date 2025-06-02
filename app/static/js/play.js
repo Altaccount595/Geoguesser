@@ -128,3 +128,41 @@ if (guessed){
 if (performance.getEntriesByType("navigation")[0].type === "back_forward") {
     location.replace("/region/" + region);
   }
+
+  (function enableMiniMapDraggingAndResizing() {
+    // Setup ResizeObserver to handle map resizing when container changes size
+    const resizeObserver = new ResizeObserver(() => {
+      map.invalidateSize(); // Let Leaflet know the size changed
+    });
+    resizeObserver.observe(document.getElementById('mini-container'));
+
+    // Dragging support
+    const container = document.getElementById('mini-container');
+    let isDragging = false;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    container.addEventListener("mousedown", function (e) {
+      // Prevent dragging if user clicks on the guess button
+      if (e.target !== container) return;
+
+      isDragging = true;
+      offsetX = e.clientX - container.offsetLeft;
+      offsetY = e.clientY - container.offsetTop;
+      container.style.cursor = "grabbing";
+    });
+
+    document.addEventListener("mouseup", function () {
+      isDragging = false;
+      container.style.cursor = "move";
+    });
+
+    document.addEventListener("mousemove", function (e) {
+      if (!isDragging) return;
+
+      container.style.left = `${e.clientX - offsetX}px`;
+      container.style.top = `${e.clientY - offsetY}px`;
+      container.style.bottom = "auto"; // Reset auto positioning
+      container.style.right = "auto";
+    });
+  })();
