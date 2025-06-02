@@ -2,28 +2,53 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Results</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/play.css') }}">
 </head>
 <body>
-  <h1>game complete – {{ region|upper }} ({{ 'Timed' if mode=='timed' else 'Untimed' }})</h1>
+  <nav>
+    <div class="nav-left">
+      <a href="{{ url_for('home') }}">Home</a>
+    </div>
+    <div class="nav-right">
+      {% if session.get('username') %}
+        <a href="{{ url_for('profile') }}">Profile</a>
+        <a href="{{ url_for('information') }}">ℹ</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+      {% else %}
+        <a href="{{ url_for('information') }}">ℹ</a>
+        <a href="{{ url_for('landing') }}">Login</a>
+      {% endif %}
+    </div>
+  </nav>
 
-  <p>total points: <strong>{{ total }}</strong> / 25000</p>
+  <div class="results-container">
+    <h1>game complete – {{ region|upper }} ({{ 'Timed' if mode=='timed' else 'Untimed' }})</h1>
 
-  {% if history %}
-  <table>
-    <tr><th>#</th><th>km off</th><th>points</th></tr>
-    {% for d, pts in history %}
-    <tr>
-      <td>{{ loop.index }}</td>
-      <td>{{ d }}</td>
-      <td>{{ pts }}</td>
-    </tr>
-  {% endfor %}
-</table>
-{% endif %}
-    <p>
-    <a href="{{ url_for('play', mode=mode, region=region) }}">Play again</a>
-    <a href="{{ url_for('home') }}">Home</a>
-    </p>
+    <div class="results-summary">
+      <p>total points: <strong>{{ total }}</strong> / 25000</p>
+
+      {% if history %}
+      <table class="results-table">
+        <tr><th>#</th><th>km off</th><th>points</th></tr>
+        {% for d, pts in history %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{ d }}</td>
+          <td>{{ pts }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+      {% endif %}
+    </div>
+
+    <div class="results-actions">
+      <a href="{{ url_for('play', mode=mode, region=region) }}" class="action-btn">Play Again</a>
+      <a href="{{ url_for('home') }}" class="action-btn">Home</a>
+    </div>
+  </div>
 </body>
 </html>
