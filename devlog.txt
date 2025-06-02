@@ -102,7 +102,7 @@ alexL -- 2025-05-21 23:30
 alexL -- 2025-05-22 21:30
 * fixed timed mode so it redirects properly
 * added home css
-* updated import styling 
+* updated import styling
 
 alexL -- 2025-05-24 15:30
 * moved styling and js to play.css and play.js
@@ -135,7 +135,7 @@ alexL -- 2025-05-28 21:30
 
 alexL -- 2025-05-29 22:00
 * imported US and Europe into database (not served on droplet yet)
-* refined landing page 
+* refined landing page
 
 alexL -- 2025-05-30 20:00
 * added oceania, asia (no locs yet)
@@ -152,3 +152,6 @@ alexL -- 2025-06-01 16:20
 * made styling for round results uniform with rest of site
 * fixed profile to show # games played, max score, and avg score
 * fixed url builder bug (showed 60 seconds even for untimed)
+
+alexL -- 2025-06-02 10:20
+* added styling to region to make uniform with rest of site 
