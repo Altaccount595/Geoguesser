@@ -144,11 +144,18 @@ def play(mode, region):
     
     # Reset game state for fresh games or region/mode changes
     if "fresh" in request.args:
-        for k in ("round", "location", "history", "expires", "mode", "region", "timer_seconds", "move_mode"):
+        for k in ("round", "location", "history", "expires", "mode", "region", "timer_seconds", "move_mode", "game_start_time", "round_start_time"):
             session.pop(k, None)
+        
+        clean_url = url_for('play', mode=mode, region=region)
+        if mode == "timed" and timer_seconds > 0:
+            clean_url += f"?timer={timer_seconds}&move={move_mode}"
+        else:
+            clean_url += f"?move={move_mode}"
+        return redirect(clean_url)
 
     if "round" in session and (session.get("mode") != mode or session.get("region") != region):
-        for k in ("round", "location", "history", "expires", "mode", "region", "timer_seconds", "move_mode"):
+        for k in ("round", "location", "history", "expires", "mode", "region", "timer_seconds", "move_mode", "game_start_time", "round_start_time"):
             session.pop(k, None)
 
     # Initialize new game
@@ -219,7 +226,7 @@ def play(mode, region):
                 lat=actual[0],lon=actual[1],
                 round=session["round"],
                 history=session["history"],
-                total=sum(p for _,p in session["history"]),
+                total=sum(p for _, p in session["history"]),
                 map_key=getKey(),
                 mode=session["mode"],
                 region=region,
