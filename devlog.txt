@@ -163,7 +163,10 @@ alexL -- 2025-06-02 19:30
 * revamped play routing to js such that timed mode would work (timeout rounds would have results)
 * cleaned up the codebase 
 
-<<<<<<< HEAD
+alexL -- 2025-06-02 22:10
+* fixed round 1 refresh error
+* fixed back navigation error
+
 tawabB -- 2025-06-02 23:08
 * MINIMAP COMPLETELY FUNCTIONAL:
   - resizable (!!!)
@@ -172,8 +175,3 @@ tawabB -- 2025-06-02 23:08
   - movable 
   - border matching website aesthetic
   - "Leaflet" attribution changed to "DevoGuessr"
-=======
-alexL -- 2025-06-02 22:10
-* fixed round 1 refresh error
-* fixed back navigation error
->>>>>>> d81134ff737b9b6018dc813acc6b78a1387541a7
