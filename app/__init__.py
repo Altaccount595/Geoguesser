@@ -339,10 +339,13 @@ def auth():
         username = request.form["username"]
         password = request.form["password"]
         if "login" in request.form:
-            if db.check_user(username, password):
-                session["username"] = username
-                return redirect(url_for("home"))
-            flash("Invalid username or password!")
+            try:
+                if db.check_user(username, password):
+                    session["username"] = username
+                    return redirect(url_for("home"))
+                flash("Invalid username or password!")
+            except:
+                flash("Invalid username or password!")
         elif "register" in request.form:
             if db.add_user(username, password):
                 session["username"] = username
