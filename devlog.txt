@@ -20,6 +20,9 @@ alexL -- 2025-05-08 22:50
 * added db for users
 * added auth.html and auth route
 
+jonathanM -- 2025-05-09 10:30
+* added basic leaflet js map
+
 tawabB -- 2025-05-09 10:47
 * added db functions:
   - add_user
@@ -129,6 +132,10 @@ alexL -- 2025-05-25 18:45
 alexL -- 2025-05-27 22:00?
 * added score animation for each round
 
+jonathanM -- 2025-05-27 10:00
+* got second droplet up and running
+
+
 alexL -- 2025-05-28 21:30
 * made it such that minimap begins over the region being played on by adjusting view
 * replaced auth with just landing and improved nav bar
@@ -154,14 +161,14 @@ alexL -- 2025-06-01 16:20
 * fixed url builder bug (showed 60 seconds even for untimed)
 
 alexL -- 2025-06-02 10:20
-* added styling to region to make uniform with rest of site 
+* added styling to region to make uniform with rest of site
 
 alexL -- 2025-06-02 19:30
 * added Tex/Latex ted talk requiremnt to results
 * added time to leaderboard
-* added past games to profile 
+* added past games to profile
 * revamped play routing to js such that timed mode would work (timeout rounds would have results)
-* cleaned up the codebase 
+* cleaned up the codebase
 
 alexL -- 2025-06-02 22:10
 * fixed round 1 refresh error
@@ -172,6 +179,6 @@ tawabB -- 2025-06-02 23:08
   - resizable (!!!)
   - resizable from all four corners
   - size stays constant once resized and map becomes semi-transparent instead of shrinking + semi-transparent
-  - movable 
+  - movable
   - border matching website aesthetic
   - "Leaflet" attribution changed to "DevoGuessr"
