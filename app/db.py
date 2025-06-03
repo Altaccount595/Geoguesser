@@ -143,7 +143,7 @@ def import_folder_to_loc(region, folder_path, sample: int=500):
 def getRandLoc(region="nyc"):
     conn = get_db_connection()
     cur = conn.cursor()
-    if region == "global":
+    if region == "world":
         cur.execute("SELECT lat, long FROM loc ORDER BY RANDOM() LIMIT 1")
     else:
         cur.execute(

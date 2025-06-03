@@ -17,10 +17,10 @@ const regionView = {
     us:     { center: [39.5, -98.35 ], zoom: 4 },
     asia:   { center: [34.0, 100.62], zoom: 3},
     oceania:{ center: [22.7, 140.0], zoom: 3},
-    global: { center: [20, 0], zoom: 2 }
+    world:  { center: [20, 0], zoom: 2 }
 };
 
-const { center, zoom } = regionView[region] || regionView.global;
+const { center, zoom } = regionView[region] || regionView.world;
 var map = L.map('mini').setView(center, zoom);
 
 const guessBtn = document.getElementById('guessBtn');
