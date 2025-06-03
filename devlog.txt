@@ -165,3 +165,4 @@ alexL -- 2025-06-02 19:30
 
 alexL -- 2025-06-02 22:10
 * fixed round 1 refresh error
+* fixed back navigation error
