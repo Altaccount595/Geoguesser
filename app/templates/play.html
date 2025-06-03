@@ -25,6 +25,11 @@
       <div id="mini">
         <button id="guessBtn" hidden>Submit Guess?</button>
       </div>
+      <!-- Resize handles -->
+      <div class="resize-handle corner top-left"></div>
+      <div class="resize-handle corner top-right"></div>
+      <div class="resize-handle corner bottom-left"></div>
+      <div class="resize-handle corner bottom-right"></div>
     </div>
 
     <form id="guessForm" method="POST" action="{{ url_for('play', mode=mode, region=region) }}" style="display:none">
@@ -98,6 +103,8 @@
         timeout: {{ timeout|default(false)|tojson }}
       };
     </script>
+
+
 
     <script src="{{ url_for('static', filename='js/play.js') }}"></script>
 

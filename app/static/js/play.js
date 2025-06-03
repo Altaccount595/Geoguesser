@@ -68,6 +68,9 @@ map.on('click', function(e) {
     guessBtn.hidden = false;
 });
 
+map.attributionControl.setPrefix('');
+map.attributionControl.addAttribution('© DevoGuessr');
+
 guessBtn.onclick=()=>document.getElementById('guessForm').submit();
 
 if (mode === 'timed' && !guessed && remaining > 0) {
@@ -143,40 +146,107 @@ if (performance.getEntriesByType("navigation")[0].type === "back_forward") {
     location.replace("/region/" + region);
   }
 
-  (function enableMiniMapDraggingAndResizing() {
-    // Setup ResizeObserver to handle map resizing when container changes size
-    const resizeObserver = new ResizeObserver(() => {
-      map.invalidateSize(); // Let Leaflet know the size changed
+ (function enableMiniMapDraggingAndResizing() {
+  const container = document.getElementById('mini-container');
+  const mapElement = document.getElementById('mini');
+
+function debounce(fn, delay) {
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => fn(...args), delay);
+  };
+}
+const resizeObserver = new ResizeObserver(
+  debounce(() => map.invalidateSize(), 100)
+);
+
+  // DRAG SUPPORT
+  let isDragging = false;
+  let offsetX = 0;
+  let offsetY = 0;
+
+  // Start dragging only when user clicks on container but *not* the map
+  container.addEventListener("mousedown", function (e) {
+    // If the user clicked inside the map, don't start dragging
+    const mapRect = mapElement.getBoundingClientRect();
+    if (
+      e.clientX >= mapRect.left &&
+      e.clientX <= mapRect.right &&
+      e.clientY >= mapRect.top &&
+      e.clientY <= mapRect.bottom
+    ) {
+      return;
+    }
+
+    isDragging = true;
+    offsetX = e.clientX - container.offsetLeft;
+    offsetY = e.clientY - container.offsetTop;
+    container.style.cursor = "grabbing";
+  });
+
+  document.addEventListener("mouseup", function () {
+    isDragging = false;
+    container.style.cursor = "move";
+  });
+
+  document.addEventListener("mousemove", function (e) {
+    if (!isDragging) return;
+    container.style.left = `${e.clientX - offsetX}px`;
+    container.style.top = `${e.clientY - offsetY}px`;
+    container.style.bottom = "auto";
+    container.style.right = "auto";
+  });
+})();
+
+(function enableCustomResize() {
+  const container = document.getElementById('mini-container');
+  const handles = container.querySelectorAll('.resize-handle');
+
+  handles.forEach(handle => {
+    handle.addEventListener('mousedown', function (e) {
+      e.preventDefault();
+      e.stopPropagation(); // prevent drag
+
+      const startX = e.clientX;
+      const startY = e.clientY;
+      const startWidth = parseFloat(getComputedStyle(container).width);
+      const startHeight = parseFloat(getComputedStyle(container).height);
+      const startLeft = container.offsetLeft;
+      const startTop = container.offsetTop;
+
+      const isTop = handle.classList.contains('top-left') || handle.classList.contains('top-right');
+      const isLeft = handle.classList.contains('top-left') || handle.classList.contains('bottom-left');
+
+      function doDrag(e) {
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+
+        if (isLeft) {
+          container.style.width = `${startWidth - dx}px`;
+          container.style.left = `${startLeft + dx}px`;
+        } else {
+          container.style.width = `${startWidth + dx}px`;
+        }
+
+        if (isTop) {
+          container.style.height = `${startHeight - dy}px`;
+          container.style.top = `${startTop + dy}px`;
+        } else {
+          container.style.height = `${startHeight + dy}px`;
+        }
+
+        map.invalidateSize();
+      }
+
+      function stopDrag() {
+        document.removeEventListener('mousemove', doDrag);
+        document.removeEventListener('mouseup', stopDrag);
+      }
+
+      document.addEventListener('mousemove', doDrag);
+      document.addEventListener('mouseup', stopDrag);
     });
-    resizeObserver.observe(document.getElementById('mini-container'));
+  });
+})();
 
-    // Dragging support
-    const container = document.getElementById('mini-container');
-    let isDragging = false;
-    let offsetX = 0;
-    let offsetY = 0;
-
-    container.addEventListener("mousedown", function (e) {
-      // Prevent dragging if user clicks on the guess button
-      if (e.target !== container) return;
-
-      isDragging = true;
-      offsetX = e.clientX - container.offsetLeft;
-      offsetY = e.clientY - container.offsetTop;
-      container.style.cursor = "grabbing";
-    });
-
-    document.addEventListener("mouseup", function () {
-      isDragging = false;
-      container.style.cursor = "move";
-    });
-
-    document.addEventListener("mousemove", function (e) {
-      if (!isDragging) return;
-
-      container.style.left = `${e.clientX - offsetX}px`;
-      container.style.top = `${e.clientY - offsetY}px`;
-      container.style.bottom = "auto"; // Reset auto positioning
-      container.style.right = "auto";
-    });
-  })();

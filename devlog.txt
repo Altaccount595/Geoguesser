@@ -162,3 +162,12 @@ alexL -- 2025-06-02 19:30
 * added past games to profile 
 * revamped play routing to js such that timed mode would work (timeout rounds would have results)
 * cleaned up the codebase 
+
+tawabB -- 2025-06-02 23:08
+* MINIMAP COMPLETELY FUNCTIONAL:
+  - resizable (!!!)
+  - resizable from all four corners
+  - size stays constant once resized and map becomes semi-transparent instead of shrinking + semi-transparent
+  - movable 
+  - border matching website aesthetic
+  - "Leaflet" attribution changed to "DevoGuessr"
