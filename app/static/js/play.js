@@ -134,17 +134,64 @@ if (guessed){
     const nextBtn=document.getElementById('nextBtn');
     nextBtn.hidden=false;
     nextBtn.onclick=()=>{
+        if (window.history && window.history.replaceState) {
+            window.history.replaceState({gameState: true}, null, window.location.href);
+        }
+        
         document.querySelector('input[name="next"]').disabled=false;
         document.getElementById('guessForm').submit();
     };
 }
 
-// Adapted from: MODEL: ChatGPT 4o TIME: 2025-05-24 6:45PM
+// Adapted from: MODEL: ChatGPT 4o TIME: 2025-05-24 6:45PM and from: MODEL : ChatGPT 4o TIME: 2025-06-02 10:35PM
 // Purpose: redirect user to home if browser navigation is back/forward
 // Prompt: how do i tell when a page is reshown by a back/forward button and automatically send the user to the home page when this button is pressed?”
-if (performance.getEntriesByType("navigation")[0].type === "back_forward") {
-    location.replace("/region/" + region);
-  }
+// Handle navigation control - prevent going back through rounds
+(function setupNavigationControl() {
+    let hasLeftGame = false;
+    
+    // Detect if this page was reached via back/forward navigation
+    if (performance.getEntriesByType("navigation")[0].type === "back_forward") {
+        // Clear game state on server and redirect to region page
+        fetch('/leave', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'region=' + encodeURIComponent(region)
+        }).then(() => {
+            location.replace("/region/" + region);
+        }).catch(() => {
+            location.replace("/region/" + region);
+        });
+        return;
+    }
+    
+    // Handle back button - always go to region page and clear game state
+    window.addEventListener('popstate', function(event) {
+        if (!hasLeftGame) {
+            hasLeftGame = true;
+            
+            // Clear game state on server
+            fetch('/leave', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'region=' + encodeURIComponent(region)
+            }).then(() => {
+                location.replace("/region/" + region);
+            }).catch(() => {
+                location.replace("/region/" + region);
+            });
+        }
+    });
+    
+    // Push a state entry to capture back button presses
+    if (window.history && window.history.pushState) {
+        window.history.pushState({gameState: true}, null, window.location.href);
+    }
+})();
 
  (function enableMiniMapDraggingAndResizing() {
   const container = document.getElementById('mini-container');
