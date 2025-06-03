@@ -42,6 +42,52 @@
     </div>
   </div>
 
+  <h2>Your Games Played</h2>
+  <div class="leaderboard-container">
+    <div class="leaderboard-section">
+      <h3>Movement Allowed</h3>
+      <table>
+        <tr><th>#</th><th>Region</th><th>Points</th><th>Distance (km)</th><th>Time</th><th>Date</th></tr>
+        {% if games and games.move_games %}
+          {% for game in games.move_games %}
+            <tr>
+              <td>{{ loop.index }}</td>
+              <td>{{ game.region|title }}</td>
+              <td>{{ game.points }}/25000</td>
+              <td>{{ "%.2f"|format(game.distance) }}</td>
+              <td>{{ "%.1f"|format(game.game_time) }}s</td>
+              <td>{{ game.timestamp.strftime('%Y-%m-%d') }}</td>
+            </tr>
+          {% endfor %}
+        {% else %}
+          <tr><td colspan="6">No games played yet</td></tr>
+        {% endif %}
+      </table>
+    </div>
+    
+    <div class="leaderboard-section">
+      <h3>No Movement</h3>
+      <table>
+        <tr><th>#</th><th>Region</th><th>Points</th><th>Distance (km)</th><th>Time</th><th>Date</th></tr>
+        {% if games and games.nomove_games %}
+          {% for game in games.nomove_games %}
+            <tr>
+              <td>{{ loop.index }}</td>
+              <td>{{ game.region|title }}</td>
+              <td>{{ game.points }}/25000</td>
+              <td>{{ "%.2f"|format(game.distance) }}</td>
+              <td>{{ "%.1f"|format(game.game_time) }}s</td>
+              <td>{{ game.timestamp.strftime('%Y-%m-%d') }}</td>
+            </tr>
+          {% endfor %}
+        {% else %}
+          <tr><td colspan="6">No games played yet</td></tr>
+        {% endif %}
+      </table>
+    </div>
+  </div>
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/region.css') }}">
 
 </body>
 </html>

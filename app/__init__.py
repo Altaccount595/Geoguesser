@@ -1,7 +1,6 @@
 from flask import (
     Flask,
     flash,
-    jsonify,
     redirect,
     render_template,
     request,
@@ -14,13 +13,11 @@ import os
 import time
 
 import db
-from db import getRandLoc, add_score, top_scores, get_user_stats
-from api_handle import image, getKey
+from db import getRandLoc, add_score, top_scores, get_user_stats, get_user_games
 
-#from .db import getRandLoc, add_score, top_scores
+#from .db import getRandLoc, add_score, top_scores, get_user_stats, get_user_games
 #import os, math, time
 #from . import db
-#from .api_handle import image, getKey
 
 RADIUS = 6371.0
 REGION_MAX_DISTANCE = {
@@ -38,8 +35,23 @@ app.secret_key = os.urandom(32)
 
 # helper functions
 
+def getKey():
+    try:
+        with open('keys/streetview.txt', 'r') as file:
+            key = file.read().strip()
+    except:
+        print('error')
+        return
+    return key
+    #return os.environ["MAPS_KEY"] for droplet
+
 def toRadians(degree):
     return degree *(math.pi / 180.0)
+
+def generate_latex_calculation(distance, max_dist, points):
+    """Generate LaTeX formula showing how score was calculated"""
+    latex = f"${points} = 5000 \\times e^{{-10 \\times \\frac{{{distance:.2f}}}{{{max_dist}}}}}$"
+    return latex
 
 def haversine(lat1, lon1, lat2, lon2):
     lat1 = toRadians(lat1)
@@ -91,9 +103,17 @@ def results(mode, region):
     if "results" not in session:
         return render_template("home.html", username=session.get("username"))
     data = session["results"]
+
+    calculations = []
+    max_dist = max_distance(region)
+    for dist, pts in data["history"]:
+        latex = generate_latex_calculation(dist, max_dist, pts)
+        calculations.append(latex)
+    
     return render_template(
         "results.html",finished=True,history=data["history"],
-        total=data["total"],region=region, mode=mode
+        total=data["total"],region=region, mode=mode,
+        calculations=calculations
     )
 
 #play route
@@ -140,50 +160,46 @@ def play(mode, region):
                 "round": 1,"history": [],
                 "location": {"lat": lat, "long": lon, "heading": 0},
                 "timer_seconds": timer_seconds,
-                "move_mode": move_mode
+                "move_mode": move_mode,
+                "game_start_time": time.time(),
+                "round_start_time": time.time()
             }
         )
         if mode == "timed" and timer_seconds > 0:
             session["expires"] = time.time() + timer_seconds
         session.modified = True
 
-    # Handle timer expiration
-    if session["mode"] == "timed" and session.get("timer_seconds", 60) > 0 and time.time() > session.get("expires", float('inf')):
-        session["history"].append((max_distance(region), 0))
-        session["round"] += 1
-
-        if session["round"] > 5:
-            total = sum(p for _, p in session["history"])
-            add_score(
-                session["username"], points=total,
-                distance=sum(d for d, _ in session["history"]),
-                mode=session["mode"], region=region,
-                move_mode=session.get("move_mode", "move")
-            )
-            session.setdefault("games", []).append(
-                {"scores": session["history"][:], "total": total}
-            )
-            session["results"] = {
-                "history": session["history"],
-                "total": total,
-                "mode": session["mode"]
-            }
-            for k in ("round", "location", "history", "expires", "mode", "timer_seconds", "move_mode"):
-                session.pop(k, None)
-            return redirect(url_for("results", mode=mode, region=region))
-        lat, lon = getRandLoc(region)
-        session["location"] = {"lat": lat, "long": lon, "heading": 0}
-        if session.get("timer_seconds", 60) > 0:
-            session["expires"] = time.time() + session["timer_seconds"]
-        session.modified = True
-        if mode == "timed":
-            return redirect(url_for("play", mode=mode, region=region, timer=session.get("timer_seconds", 60), move=session.get("move_mode", 'move')))
-        else:
-            return redirect(url_for("play", mode=mode, region=region, move=session.get("move_mode", 'move')))
-
     # Handle POST requests (user guesses and next round)
     if request.method == "POST":
+        # Handle timeout submission from js
+        if "timeout" in request.form:
+            round_time = time.time() - session.get("round_start_time", time.time())
+            session["history"].append((max_distance(region), 0))
+            session.modified = True
+
+            return render_template(
+                "play.html",
+                finished=False,
+                guessed=True,
+                timeout=True,
+                dist=max_distance(region),
+                pts=0,
+                guess_lat=0,
+                guess_lon=0,
+                lat=session["location"]["lat"],
+                lon=session["location"]["long"],
+                round=session["round"],
+                history=session["history"],
+                total=sum(p for _,p in session["history"]),
+                map_key=getKey(),
+                mode=session["mode"],
+                region=region,
+                move_mode=session.get("move_mode", 'move'),
+                is_final_round=(session["round"] == 5)
+            )
+
         if "input" in request.form and "next" not in request.form:
+            round_time = time.time() - session.get("round_start_time", time.time())
             dist = check_guess()
             pts = round(POINT_CAP * math.exp(-10 * (dist / max_distance(region))))
             guess = list(map(float, request.form["input"].split(", ")))
@@ -208,20 +224,24 @@ def play(mode, region):
                 mode=session["mode"],
                 region=region,
                 move_mode=session.get("move_mode", 'move'),
+                is_final_round=(session["round"] == 5)
             )
 
         if "next" in request.form:
+            # Handle next round after timeout or normal guess
             session["round"] += 1
 
             if session["round"] > 5:
                 total = sum(p for _, p in session["history"])
+                game_time = time.time() - session.get("game_start_time", time.time())
                 add_score(
                     session["username"],
                     points=total,
                     distance=sum(d for d, _ in session["history"]),
                     mode=session["mode"],
                     region=region,
-                    move_mode=session.get("move_mode", "move")
+                    move_mode=session.get("move_mode", "move"),
+                    game_time=game_time
                 )
                 session.setdefault("games", []).append({"scores": session["history"][:],"total":  total })
                 session["results"] = {
@@ -229,12 +249,13 @@ def play(mode, region):
                     "total": total,
                     "mode":session["mode"]
                 }
-                for k in ("round","location","history","expires","mode", "timer_seconds", "move_mode"):
+                for k in ("round","location","history","expires","mode", "timer_seconds", "move_mode", "game_start_time", "round_start_time", "timeout_occurred"):
                     session.pop(k, None)
                 return redirect(url_for("results", mode=mode, region=region))
 
             lat,lon = getRandLoc(region)
             session["location"] = {"lat": lat, "long": lon, "heading": 0}
+            session["round_start_time"] = time.time()
             if session["mode"] == "timed" and session.get("timer_seconds", 60) > 0:
                 session["expires"] = time.time() + session["timer_seconds"]
             session.modified = True
@@ -267,7 +288,7 @@ def play(mode, region):
 def leave_game():
     """clears game state and returns to region page"""
     region = request.form.get("region", "nyc")
-    for k in ("round", "location", "history", "expires", "mode", "timer_seconds", "move_mode"):
+    for k in ("round", "location", "history", "expires", "mode", "timer_seconds", "move_mode", "game_start_time", "round_start_time", "timeout_occurred"):
         session.pop(k, None)
     return redirect(url_for("region_page", region=region))
 
@@ -281,13 +302,6 @@ def region_page(region):
         flash("You must be logged in to play")
     return render_template("region.html", region=region, move_scores=move_scores, nomove_scores=nomove_scores, username=username)
 
-@app.route("/leaderboard")
-@app.route("/leaderboard/<region>")
-def leaderboard(region="nyc"):
-    """Display leaderboard for specified region (defaults to NYC)"""
-    scores = db.top_scores(region)
-    return render_template("leaderboard.html", scores=scores, region=region)
-
 @app.route("/profile")
 def profile():
     """Display user profile with game history"""
@@ -296,8 +310,9 @@ def profile():
     
     username = session["username"]
     stats = db.get_user_stats(username)
+    games_data = db.get_user_games(username)
     
-    return render_template("profile.html", username=username, stats=stats, games=session.get("games", []))
+    return render_template("profile.html", username=username, stats=stats, games=games_data)
 
 @app.route("/information")
 def information():

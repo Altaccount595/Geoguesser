@@ -7,7 +7,8 @@ const {
     guessLat,
     guessLon,
     region,
-    pts: roundPts
+    pts: roundPts,
+    timeout
 } = window.gameData;
 
 const regionView = {
@@ -77,27 +78,40 @@ if (mode === 'timed' && !guessed && remaining > 0) {
         t -= 1;
         if (t <= 0){
             clearInterval(tick);
-            location.reload();
+            // Submit a timeout form 
+            const form = document.getElementById('guessForm');
+            const timeoutInput = document.createElement('input');
+            timeoutInput.type = 'hidden';
+            timeoutInput.name = 'timeout';
+            timeoutInput.value = 'true';
+            form.appendChild(timeoutInput);
+            form.submit();
             return;
         } else {
             box.textContent = t;
         }
         }, 1000);
     })();
-    }
+}
 
 if (guessed){
     const res = L.map('resultMap',{zoomControl:false,attributionControl:false});
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(res);
 
     //get players guess g and actual answer a
-    const g = [guessLat, guessLon];
     const a = [initLat, initLon];
 
-    L.circleMarker(g,{radius:6}).addTo(res);  //blue marker for players guess
+    // Only show guess marker and line if not a timeout
+    if (!timeout && guessLat !== 0 && guessLon !== 0) {
+        const g = [guessLat, guessLon];
+        L.circleMarker(g,{radius:6}).addTo(res);  //blue marker for players guess
+        L.polyline([g,a],{dashArray:'6 6'}).addTo(res); //dashed line
+        res.fitBounds([g,a],{padding:[40,40]}); //fit map bounds
+    } else {
+        res.setView(a, 10);
+    }
+    
     L.circleMarker(a,{radius:6,color:'red',fillColor:'red'}).addTo(res); //red marker for actual location
-    L.polyline([g,a],{dashArray:'6 6'}).addTo(res); //dashed line
-    res.fitBounds([g,a],{padding:[40,40]}); //fit map bounds
 
     // credit to Doctor Stanley H[Wh]oo blackjack.js animateBalanceChange
     const ptsSpan = document.getElementById('pts');

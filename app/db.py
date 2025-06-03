@@ -23,6 +23,7 @@ def create_db():
     conn = get_db_connection()
     cur = conn.cursor()
     cur.executescript("""
+        DROP TABLE IF EXISTS rounds;
         DROP TABLE IF EXISTS scores;
         DROP TABLE IF EXISTS address;
         DROP TABLE IF EXISTS loc;  
@@ -40,8 +41,22 @@ def create_db():
             move_mode TEXT NOT NULL DEFAULT 'move',
             points INTEGER NOT NULL,
             distance REAL NOT NULL,
+            game_time REAL DEFAULT 0,
             timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
 	);
+
+        CREATE TABLE IF NOT EXISTS rounds (
+            round_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            region TEXT NOT NULL,
+            mode TEXT NOT NULL DEFAULT 'untimed',
+            move_mode TEXT NOT NULL DEFAULT 'move',
+            round_number INTEGER NOT NULL,
+            points INTEGER NOT NULL,
+            distance REAL NOT NULL,
+            round_time REAL DEFAULT 0,
+            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
 
 	CREATE TABLE IF NOT EXISTS loc (
         loc_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -81,7 +96,7 @@ def check_user(username, password):
     return row and check_password_hash(row["password_hash"], password)
 
 # adds users scores
-def add_score(username, points, distance, mode="untimed", region="nyc", move_mode="move"):
+def add_score(username, points, distance, mode="untimed", region="nyc", move_mode="move", game_time=0):
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute("SELECT user_id FROM users WHERE username = ?", (username,))
@@ -92,8 +107,8 @@ def add_score(username, points, distance, mode="untimed", region="nyc", move_mod
     user_id = id["user_id"]
     
     cur.execute(
-        "INSERT INTO scores (user_id, region, mode, move_mode, points, distance) VALUES (?, ?, ?, ?, ?, ?)",
-        (user_id, region, mode, move_mode, points, distance,)
+        "INSERT INTO scores (user_id, region, mode, move_mode, points, distance, game_time) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        (user_id, region, mode, move_mode, points, distance, game_time)
     )
     
     conn.commit()
@@ -148,7 +163,7 @@ def top_scores(region="nyc", move_mode=None):
 
     if move_mode:
         cur.execute("""
-            SELECT u.username, s.points, s.distance, s.timestamp
+            SELECT u.username, s.points, s.distance, s.game_time, s.timestamp
             FROM scores AS s
             JOIN users AS u ON u.user_id = s.user_id
             WHERE s.region = ? AND s.move_mode = ?
@@ -157,7 +172,7 @@ def top_scores(region="nyc", move_mode=None):
         """, (region, move_mode))
     else:
         cur.execute("""
-            SELECT u.username, s.points, s.distance, s.timestamp
+            SELECT u.username, s.points, s.distance, s.game_time, s.timestamp
             FROM scores AS s
             JOIN users AS u ON u.user_id = s.user_id
             WHERE s.region = ?
@@ -204,6 +219,55 @@ def get_user_stats(username):
         'completed_games': stats['completed_games'] or 0,
         'avg_score': round(stats['avg_score'] or 0),
         'max_score': stats['max_score'] or 0
+    }
+
+def get_user_games(username):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    cur.execute("SELECT user_id FROM users WHERE username = ?", (username,))
+    user = cur.fetchone()
+    if not user:
+        conn.close()
+        return None
+        
+    user_id = user["user_id"]
+    
+    # Get games for move mode
+    cur.execute("""
+        SELECT region, points, distance, game_time, timestamp
+        FROM scores
+        WHERE user_id = ? AND move_mode = 'move'
+        ORDER BY timestamp DESC;
+    """, (user_id,))
+    move_games = cur.fetchall()
+    
+    # Get games for no move mode
+    cur.execute("""
+        SELECT region, points, distance, game_time, timestamp
+        FROM scores
+        WHERE user_id = ? AND move_mode = 'nomove'
+        ORDER BY timestamp DESC;
+    """, (user_id,))
+    nomove_games = cur.fetchall()
+    
+    conn.close()
+    
+    formatted_move = []
+    for row in move_games:
+        formatted_row = dict(row)
+        formatted_row['timestamp'] = datetime.strptime(row['timestamp'], '%Y-%m-%d %H:%M:%S')
+        formatted_move.append(formatted_row)
+    
+    formatted_nomove = []
+    for row in nomove_games:
+        formatted_row = dict(row)
+        formatted_row['timestamp'] = datetime.strptime(row['timestamp'], '%Y-%m-%d %H:%M:%S')
+        formatted_nomove.append(formatted_row)
+    
+    return {
+        'move_games': formatted_move,
+        'nomove_games': formatted_nomove
     }
 
     

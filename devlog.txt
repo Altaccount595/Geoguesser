@@ -155,3 +155,10 @@ alexL -- 2025-06-01 16:20
 
 alexL -- 2025-06-02 10:20
 * added styling to region to make uniform with rest of site 
+
+alexL -- 2025-06-02 19:30
+* added Tex/Latex ted talk requiremnt to results
+* added time to leaderboard
+* added past games to profile 
+* revamped play routing to js such that timed mode would work (timeout rounds would have results)
+* cleaned up the codebase 

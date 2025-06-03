@@ -7,6 +7,14 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/play.css') }}">
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    };
+  </script>
 </head>
 <body>
   <nav>
@@ -33,12 +41,13 @@
 
       {% if history %}
       <table class="results-table">
-        <tr><th>#</th><th>km off</th><th>points</th></tr>
-        {% for d, pts in history %}
+        <tr><th>#</th><th>km off</th><th>points</th><th>calculation</th></tr>
+        {% for i in range(history|length) %}
         <tr>
           <td>{{ loop.index }}</td>
-          <td>{{ d }}</td>
-          <td>{{ pts }}</td>
+          <td>{{ history[i][0] }}</td>
+          <td>{{ history[i][1] }}</td>
+          <td>{{ calculations[i] }}</td>
         </tr>
         {% endfor %}
       </table>

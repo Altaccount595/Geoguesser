@@ -1,13 +1,23 @@
 .region-banner {
-    height: 300px;
+    height: 350px;
     margin-bottom: 30px;
     overflow: hidden;
+    position: relative;
 }
 
 .region-banner img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+h1 {
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    font-size: 2.5rem;
+    color: #00b4ff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    text-align: center;
 }
 
 .game-mode-bar {

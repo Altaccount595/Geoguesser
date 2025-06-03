@@ -32,7 +32,7 @@
 
   <!-- region image banner -->
   <div class="region-banner">
-    <img src="{{ url_for('static', filename='img/' + region + '.jpg') }}" alt="{{ region|title }}">
+    <img src="{{ url_for('static', filename='img/banners/' + region + '.jpg') }}" alt="{{ region|title }}">
   </div>
 
   <!-- game mode selector bar -->
@@ -60,12 +60,13 @@
     <div class="leaderboard-section">
       <h3>Movement Allowed</h3>
       <table>
-        <tr><th>#</th><th>User</th><th>Points</th><th>Date</th></tr>
+        <tr><th>#</th><th>User</th><th>Points</th><th>Time</th><th>Date</th></tr>
         {% for row in move_scores %}
           <tr>
             <td>{{ loop.index }}</td>
             <td>{{ row.username }}</td>
             <td>{{ row.points }}</td>
+            <td>{{ "%.1f"|format(row.game_time) }}s</td>
             <td>{{ row.timestamp.strftime('%Y-%m-%d') }}</td>
           </tr>
         {% endfor %}
@@ -75,12 +76,13 @@
     <div class="leaderboard-section">
       <h3>No Movement</h3>
       <table>
-        <tr><th>#</th><th>User</th><th>Points</th><th>Date</th></tr>
+        <tr><th>#</th><th>User</th><th>Points</th><th>Time</th><th>Date</th></tr>
         {% for row in nomove_scores %}
           <tr>
             <td>{{ loop.index }}</td>
             <td>{{ row.username }}</td>
             <td>{{ row.points }}</td>
+            <td>{{ "%.1f"|format(row.game_time) }}s</td>
             <td>{{ row.timestamp.strftime('%Y-%m-%d') }}</td>
           </tr>
         {% endfor %}
