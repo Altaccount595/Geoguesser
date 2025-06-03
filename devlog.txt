@@ -162,3 +162,6 @@ alexL -- 2025-06-02 19:30
 * added past games to profile 
 * revamped play routing to js such that timed mode would work (timeout rounds would have results)
 * cleaned up the codebase 
+
+alexL -- 2025-06-02 22:10
+* fixed round 1 refresh error
