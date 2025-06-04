@@ -33,14 +33,14 @@
     </div>
   </nav>
 
-  <div class="results-container">
-    <h1>game complete – {{ region|upper }} ({{ 'Timed' if mode=='timed' else 'Untimed' }})</h1>
+  <div class="resultscontainer">
+    <h1>Game Complete – {{ region|upper }} ({{ 'Timed' if mode=='timed' else 'Untimed' }})</h1>
 
-    <div class="results-summary">
-      <p>total points: <strong>{{ total }}</strong> / 25000</p>
+    <div class="resultssummary">
+      <p>Total points: <strong>{{ total }}</strong> / 25000</p>
 
       {% if history %}
-      <table class="results-table">
+      <table class="resultstable">
         <tr><th>#</th><th>km off</th><th>points</th><th>calculation</th></tr>
         {% for i in range(history|length) %}
         <tr>

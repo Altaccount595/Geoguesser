@@ -4,7 +4,7 @@ body {
   background-color: #1a1a1a;
   color: white;
   font-family: 'Inter', sans-serif
-}  
+}
 #map { height: 500px; width: 45%; float: right}
 body, html {
   max-width: 100%;
@@ -19,13 +19,13 @@ body, html {
 }
 
 .mode-columns {
-  display: flex;         
-  gap: 3rem;          
-  flex-wrap: wrap;       
+  display: flex;
+  gap: 3rem;
+  flex-wrap: wrap;
 }
 
 .mode-column {
-  flex: 1 1 280px;       
+  flex: 1 1 280px;
 }
 
 /*regions layout*/
@@ -44,14 +44,14 @@ body, html {
 
 /*thumbnail hover*/
 .regions img {
-  width: 320px;        
+  width: 320px;
   height: 200px;
-  object-fit: cover;    
-  border-radius: 8px;    
+  object-fit: cover;
+  border-radius: 8px;
   transition: transform 0.25s;
 }
 .regions img:hover {
-  transform: scale(1.08);  
+  transform: scale(1.08);
 }
 
 /*nav*/
