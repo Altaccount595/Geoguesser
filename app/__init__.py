@@ -16,7 +16,6 @@ import db
 from db import getRandLoc, add_score, top_scores, get_user_stats, get_user_games
 
 #from .db import getRandLoc, add_score, top_scores, get_user_stats, get_user_games
-#import os, math, time
 #from . import db
 
 RADIUS = 6371.0

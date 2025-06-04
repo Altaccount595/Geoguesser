@@ -11,7 +11,7 @@ import random
 import sqlite3
 from datetime import datetime
 
-DB_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "users.db")
+DB_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "game.db")
 
 def get_db_connection():
     conn = sqlite3.connect(DB_PATH)
