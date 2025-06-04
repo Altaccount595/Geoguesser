@@ -322,3 +322,6 @@ body.dark-mode .resultstable td {
   border-bottom: 1px solid rgba(255, 255, 255, 1);
   color: white;
 }
+body.dark-mode .resultstable th {
+  color: white;
+}
