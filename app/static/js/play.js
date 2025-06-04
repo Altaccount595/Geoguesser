@@ -16,7 +16,7 @@ const regionView = {
     europe: { center:[54.5, 15.0], zoom: 4 },
     us:     { center: [39.5, -98.35 ], zoom: 4 },
     asia:   { center: [34.0, 100.62], zoom: 3},
-    oceania:{ center: [22.7, 140.0], zoom: 3},
+    oceania:{ center: [-25.27, 130.78], zoom: 3},
     world:  { center: [20, 0], zoom: 2 }
 };
 
@@ -81,7 +81,7 @@ if (mode === 'timed' && !guessed && remaining > 0) {
         t -= 1;
         if (t <= 0){
             clearInterval(tick);
-            // Submit a timeout form 
+            // Submit a timeout form
             const form = document.getElementById('guessForm');
             const timeoutInput = document.createElement('input');
             timeoutInput.type = 'hidden';
@@ -113,7 +113,7 @@ if (guessed){
     } else {
         res.setView(a, 10);
     }
-    
+
     L.circleMarker(a,{radius:6,color:'red',fillColor:'red'}).addTo(res); //red marker for actual location
 
     // credit to Doctor Stanley H[Wh]oo blackjack.js animateBalanceChange
@@ -137,7 +137,7 @@ if (guessed){
         if (window.history && window.history.replaceState) {
             window.history.replaceState({gameState: true}, null, window.location.href);
         }
-        
+
         document.querySelector('input[name="next"]').disabled=false;
         document.getElementById('guessForm').submit();
     };
@@ -149,7 +149,7 @@ if (guessed){
 // Handle navigation control - prevent going back through rounds
 (function setupNavigationControl() {
     let hasLeftGame = false;
-    
+
     // Detect if this page was reached via back/forward navigation
     if (performance.getEntriesByType("navigation")[0].type === "back_forward") {
         // Clear game state on server and redirect to region page
@@ -166,12 +166,12 @@ if (guessed){
         });
         return;
     }
-    
+
     // Handle back button - always go to region page and clear game state
     window.addEventListener('popstate', function(event) {
         if (!hasLeftGame) {
             hasLeftGame = true;
-            
+
             // Clear game state on server
             fetch('/leave', {
                 method: 'POST',
@@ -186,7 +186,7 @@ if (guessed){
             });
         }
     });
-    
+
     // Push a state entry to capture back button presses
     if (window.history && window.history.pushState) {
         window.history.pushState({gameState: true}, null, window.location.href);
@@ -296,4 +296,3 @@ const resizeObserver = new ResizeObserver(
     });
   });
 })();
-
