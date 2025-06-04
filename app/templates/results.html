@@ -59,5 +59,10 @@
       <a href="{{ url_for('home') }}" class="action-btn">Home</a>
     </div>
   </div>
+    <script>
+  if (localStorage.getItem('dark-mode') === 'true') {
+    document.body.classList.add('dark-mode');
+  }
+  </script>
 </body>
 </html>
