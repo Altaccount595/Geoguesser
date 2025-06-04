@@ -24,10 +24,16 @@
   </nav>
 
   <h1 style="text-align: center;">Information</h1>
-  
   <div class="info-container">
     <div class="info-box">
-      Inspired by <a href="https://www.geoguessr.com/"  style="color: #00b4ff; text-decoration: underline;">Geoguessr</a>.
+      Our project is a replica of <a href="https://www.geoguessr.com/"  style="color: #00b4ff; text-decoration: underline;">Geoguessr</a>
+      that uses GoogleMaps StreetView panoramas.
+      During each round the server picks a random StreetView coordinate and
+      shows the panorama next to an interactive world map (depending on the region the user has selected).
+      The player drops a marker on where they think the street is located and submits.
+      The game then reveals the location, draws a distance line, and awards points based on the distance between the true location and the
+      user's location. Our game has multiple regions (New York City, Europe, US, Oceania, Asia, World)
+      and users will be able to decide between untimed and timed (0 seconds-600 seconds).
     </div>
   </div>
     <script>
@@ -36,4 +42,4 @@
   }
   </script>
 </body>
-</html> 
+</html>
