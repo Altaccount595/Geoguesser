@@ -16,7 +16,6 @@ import db
 from db import getRandLoc, add_score, top_scores, get_user_stats, get_user_games
 
 #from .db import getRandLoc, add_score, top_scores, get_user_stats, get_user_games
-#import os, math, time
 #from . import db
 
 RADIUS = 6371.0
@@ -24,7 +23,7 @@ REGION_MAX_DISTANCE = {
     "nyc": 120, # km from bronx to staten island
     "us": 4500, # km from maine to hawaii
     "europe": 3800, # km from portugal to ural mountains of russia
-    "global": 20000, # half earth's circumference
+    "world": 20000, # half earth's circumference
 }
 POINT_CAP = 5000
 
@@ -70,7 +69,7 @@ def haversine(lat1, lon1, lat2, lon2):
     return RADIUS * c
 
 def max_distance(region):
-    return REGION_MAX_DISTANCE.get(region, REGION_MAX_DISTANCE["global"])
+    return REGION_MAX_DISTANCE.get(region, REGION_MAX_DISTANCE["world"])
 
 def check_guess():
     """
@@ -132,7 +131,7 @@ def play(mode, region):
     
     Parameters:
     - mode: Game mode ('timed' or 'untimed')
-    - region: Game region ('nyc', 'us', 'europe', 'global')
+    - region: Game region ('nyc', 'us', 'europe', 'world')
     """
     if "username" not in session:
         return redirect(url_for("landing"))

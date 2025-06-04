@@ -9,6 +9,21 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: none;
+}
+
+body.dark-mode .im-light{
+    display: block;
+}
+body.dark-mode .im-dark{
+    display: none;
+}
+
+body:not(.dark-mode) .im-light{
+    display: none;
+}
+body:not(.dark-mode) .im-dark{
+    display: block;
 }
 
 h1 {
@@ -109,16 +124,29 @@ th {
     margin-top: 20px;
 }
 
-.leaderboard-section {
+.leaderboardsection {
     flex: 1;
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0.5);
     padding: 20px;
     border-radius: 8px;
     border: 1px solid rgba(0, 180, 255, 0.3);
+}
+body.dark-mode .leaderboardsection{
+    flex: 1;
+    background: rgba(0, 0, 0, 0.9);
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 180, 255, 0.9);
+    color:white;
 }
 
 .leaderboard-section h3 {
     color: #00b4ff;
     margin-bottom: 15px;
     text-align: center;
+}
+
+body.dark-mode {
+  background-color: #ffffff;
+  color: #000000;
 }

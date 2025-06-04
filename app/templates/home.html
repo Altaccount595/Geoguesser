@@ -29,28 +29,74 @@
   <div class="regions">
     <a href="{{ url_for('region_page', region='nyc') }}">
       <img src="{{ url_for('static', filename='img/nyc.jpg') }}" alt="New York City">
-      <p>New York City</p>
+      <p class="loc">New York City</p>
     </a>
     <a href="{{ url_for('region_page', region='europe') }}">
       <img src="{{ url_for('static', filename='img/europe.jpg') }}" alt="Europe">
-      <p>Europe</p>
+      <p class="loc">Europe</p>
     </a>
     <a href="{{ url_for('region_page', region='us') }}">
       <img src="{{ url_for('static', filename='img/us.jpg') }}" alt="United States of America">
-      <p>United States of America</p>
+      <p class="loc">United States of America</p>
     </a>
     <a href="{{ url_for('region_page', region='asia') }}">
       <img src="{{ url_for('static', filename='img/asia.jpg') }}" alt="Asia">
-      <p>Asia</p>
+      <p class="loc">Asia</p>
     </a>
     <a href="{{ url_for('region_page', region='oceania') }}">
       <img src="{{ url_for('static', filename='img/oceania.jpg') }}" alt="Oceania">
-      <p>Oceania</p>
+      <p class="loc">Oceania</p>
     </a>
-    <a href="{{ url_for('region_page', region='global') }}">
+    <a href="{{ url_for('region_page', region='world') }}">
       <img src="{{ url_for('static', filename='img/world.jpg') }}" alt="World">
-      <p>World</p>
+      <p class="loc">World</p>
     </a>
   </div>
+
+  <div id="lightmode">
+  <p>Light Mode</p>
+  <label class="toggle-switch">
+    <input type="checkbox" id="darkModeToggle">
+    <span class="slider"></span>
+  </label>
+
+    <script>
+
+    const toggle = document.getElementById('darkModeToggle');
+    const isDarkMode = localStorage.getItem('dark-mode') === 'true';
+
+    // Apply dark mode and set checkbox based on localStorage
+    if (isDarkMode) {
+      document.body.classList.add('dark-mode');
+      toggle.checked = true;
+    } else {
+      document.body.classList.remove('dark-mode');
+      toggle.checked = false;
+    }
+
+    // Handle toggle switch changes
+    toggle.addEventListener('change', () => {
+      const enabled = toggle.checked;
+      document.body.classList.toggle('dark-mode', enabled);
+      localStorage.setItem('dark-mode', enabled);
+    });
+
+
+      // Optional: remember the toggle state
+      window.addEventListener('DOMContentLoaded', () => {
+        const saved = localStorage.getItem('dark-mode') === 'true';
+        const toggle = document.getElementById('darkModeToggle');
+        const body = document.body;
+        toggle.checked = saved;
+        body.classList.toggle('dark-mode', saved);
+      });
+
+      localStorage.setItem('dark-mode', toggle.checked);
+      //}
+
+  </script>
+  </div>
+
+
 </body>
 </html>

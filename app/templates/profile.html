@@ -6,6 +6,12 @@
   <title>Profile</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
 </head>
+<style>
+  body.dark-mode {
+  background-color: #ffffff;
+  color: #000000;
+}
+</style>
 <body>
   <nav>
     <div class="nav-left">
@@ -44,7 +50,7 @@
 
   <h2>Your Games Played</h2>
   <div class="leaderboard-container">
-    <div class="leaderboard-section">
+    <div class="leaderboardsection">
       <h3>Movement Allowed</h3>
       <table>
         <tr><th>#</th><th>Region</th><th>Points</th><th>Distance (km)</th><th>Time</th><th>Date</th></tr>
@@ -65,7 +71,7 @@
       </table>
     </div>
     
-    <div class="leaderboard-section">
+    <div class="leaderboardsection">
       <h3>No Movement</h3>
       <table>
         <tr><th>#</th><th>Region</th><th>Points</th><th>Distance (km)</th><th>Time</th><th>Date</th></tr>
@@ -87,7 +93,14 @@
     </div>
   </div>
 
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/region.css') }}">
+ 
+
+  <script>
+  if (localStorage.getItem('dark-mode') === 'true') {
+    document.body.classList.add('dark-mode');
+  }
+  </script>
+   <link rel="stylesheet" href="{{ url_for('static', filename='css/region.css') }}">
 
 </body>
 </html>

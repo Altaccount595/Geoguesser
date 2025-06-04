@@ -32,7 +32,8 @@
 
   <!-- region image banner -->
   <div class="region-banner">
-    <img src="{{ url_for('static', filename='img/banners/' + region + '.jpg') }}" alt="{{ region|title }}">
+    <img src="{{ url_for('static', filename='img/banners/' + region + '-light.jpg') }}" class="im-light" alt="{{ region|title }}">
+    <img src="{{ url_for('static', filename='img/banners/' + region + '.jpg') }}" class="im-dark" alt="{{ region|title }}">
   </div>
 
   <!-- game mode selector bar -->
@@ -57,7 +58,7 @@
 
   <h2>Top 25 Leaderboards</h2>
   <div class="leaderboard-container">
-    <div class="leaderboard-section">
+    <div class="leaderboardsection">
       <h3>Movement Allowed</h3>
       <table>
         <tr><th>#</th><th>User</th><th>Points</th><th>Time</th><th>Date</th></tr>
@@ -73,7 +74,7 @@
       </table>
     </div>
     
-    <div class="leaderboard-section">
+    <div class="leaderboardsection">
       <h3>No Movement</h3>
       <table>
         <tr><th>#</th><th>User</th><th>Points</th><th>Time</th><th>Date</th></tr>
@@ -96,5 +97,11 @@
     };
   </script>
   <script src="{{ url_for('static', filename='js/region.js') }}"></script>
+  <script>
+  if (localStorage.getItem('dark-mode') === 'true') {
+    document.body.classList.add('dark-mode');
+  }
+  </script>
+
 </body>
 </html>

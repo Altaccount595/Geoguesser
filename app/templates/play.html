@@ -116,5 +116,14 @@
         <button id="leaveBtn" type="submit">Leave game</button>
       </form>
     </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+      if (localStorage.getItem('dark-mode') === 'true') {
+        document.body.classList.add('dark-mode');
+      }
+      });
+    </script>
+
 </body>
 </html>

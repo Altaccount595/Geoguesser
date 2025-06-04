@@ -185,3 +185,7 @@ tawabB -- 2025-06-02 23:08
 
 jonathanM -- 2025-06-03 5:51
 * updated designDoc
+
+tawabB -- 2025-06-03 22:53
+* implemented website-wide light/dark mode toggle
+* added different banner images for each region depending on light/dark toggle
