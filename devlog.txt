@@ -183,5 +183,5 @@ tawabB -- 2025-06-02 23:08
   - border matching website aesthetic
   - "Leaflet" attribution changed to "DevoGuessr"
 
-jonathanM -- 2025-06-03 10:51
+jonathanM -- 2025-06-03 5:51
 * updated designDoc
