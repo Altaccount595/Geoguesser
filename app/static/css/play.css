@@ -316,12 +316,12 @@ body.dark-mode .resultscontainer{
   margin-bottom: 2rem;
   color: #000000;
 }
-body.dark-mode .resultstable td {
+body.dark-mode .resultstable td, th {
   padding: 0.75rem;
   text-align: center;
   border-bottom: 1px solid rgba(255, 255, 255, 1);
   color: white;
 }
-body.dark-mode .resultstable th {
+body.dark-mode .resultssummary {
   color: white;
 }
