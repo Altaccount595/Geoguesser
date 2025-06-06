@@ -11,9 +11,7 @@
 
 # Project Description:
 
-Our project will be focused on creating a replica of GeoGuessr by using GoogleMaps StreetView panoramas. During each round the server picks a random StreetView coordinate and shows the panorama next to an interactive world map (depending on the region the user has selected). The player drops a marker on where they think the street is located and submits. The game then reveals the location, draws a distance line, and awards points based on the distance between the true location and the user's location. Our game will have multiple regions and a timed mode. A stretch of our project is to include a TimeGuessr where users will have to guess a place and time based on historical/famous images.
-
-# Install Guide
+Our project will be focused on creating a replica of GeoGuessr by using GoogleMaps StreetView panoramas. During each round the server picks a random StreetView coordinate and shows the panorama next to an interactive world map (depending on the region the user has selected). The player drops a marker on where they think the street is located and submits. The game then reveals the location, draws a distance line, and awards points based on the distance between the true location and the user's location. Our game has multiple regions and a timed mode. 
 
 **Prerequisites**
 
@@ -75,7 +73,7 @@ $ pip install -r requirements.txt
 
 ## Best Way
 
-1. Visit (placeholder for domain) on any modern browser
+1. Visit aluo.tech on any modern browser
 2. Enjoy!
 
 ## The DEVO Way
