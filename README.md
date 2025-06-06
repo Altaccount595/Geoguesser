@@ -73,7 +73,7 @@ $ pip install -r requirements.txt
 
 ## Best Way
 
-1. Visit aluo.tech on any modern browser
+1. Visit https://aluo.tech on any modern browser
 2. Enjoy!
 
 ## The DEVO Way
