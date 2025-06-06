@@ -14,12 +14,14 @@ from datetime import datetime
 DB_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "game.db")
 
 def get_db_connection():
+    """Create and return a database connection"""
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
 
 # creates db for users and locations
 def create_db():
+    """Create database tables for users, scores, rounds, and locations"""
     conn = get_db_connection()
     cur = conn.cursor()
     cur.executescript("""
@@ -70,6 +72,7 @@ def create_db():
 
 # add users to users database
 def add_user(username, password):
+    """Add a new user to the database with hashed password"""
     conn = get_db_connection()
     cur = conn.cursor()
     pw_hash = generate_password_hash(password)
@@ -88,15 +91,28 @@ def add_user(username, password):
 
 # check users password and username
 def check_user(username, password):
+    """Verify user credentials against database"""
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute("SELECT password_hash FROM users WHERE username = ?", (username,))
+    cur.execute(
+        "SELECT password_hash FROM users WHERE username = ?", 
+        (username,)
+    )
     row = cur.fetchone()
     conn.close()
     return row and check_password_hash(row["password_hash"], password)
 
 # adds users scores
-def add_score(username, points, distance, mode="untimed", region="nyc", move_mode="move", game_time=0):
+def add_score(
+    username, 
+    points, 
+    distance, 
+    mode="untimed", 
+    region="nyc", 
+    move_mode="move", 
+    game_time=0
+):
+    """Add a game score to the database for a user"""
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute("SELECT user_id FROM users WHERE username = ?", (username,))
@@ -107,7 +123,9 @@ def add_score(username, points, distance, mode="untimed", region="nyc", move_mod
     user_id = id["user_id"]
     
     cur.execute(
-        "INSERT INTO scores (user_id, region, mode, move_mode, points, distance, game_time, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now', 'localtime'))",
+        """INSERT INTO scores (user_id, region, mode, move_mode, points, 
+        distance, game_time, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?, 
+        datetime('now', 'localtime'))""",
         (user_id, region, mode, move_mode, points, distance, game_time)
     )
     
@@ -116,6 +134,7 @@ def add_score(username, points, distance, mode="untimed", region="nyc", move_mod
     return True
 
 def import_csv_to_loc(region, csv_path, sample: int=500):
+    """Import location coordinates from CSV file to database"""
     conn = get_db_connection()
     cur  = conn.cursor()
 
@@ -134,20 +153,24 @@ def import_csv_to_loc(region, csv_path, sample: int=500):
     conn.close()
 
 def import_folder_to_loc(region, folder_path, sample: int=500):
+    """Import all CSV files from a folder to location database"""
     for file in os.listdir(folder_path):       
         if file.lower().endswith(".csv"):     
             csv_path = os.path.join(folder_path, file)
             import_csv_to_loc(region, csv_path, sample)
 
-#gets random location, this is also subject to change with the use of Google Geocoding API in order to avoid unintellgible coords
+# gets random location, this is also subject to change with the use of
+# Google Geocoding API in order to avoid unintelligible coords
 def getRandLoc(region="nyc"):
+    """Get a random location from the database for the specified region"""
     conn = get_db_connection()
     cur = conn.cursor()
     if region == "world":
         cur.execute("SELECT lat, long FROM loc ORDER BY RANDOM() LIMIT 1")
     else:
         cur.execute(
-            "SELECT lat, long FROM loc WHERE region = ? ORDER BY RANDOM() LIMIT 1",
+            """SELECT lat, long FROM loc WHERE region = ? 
+            ORDER BY RANDOM() LIMIT 1""",
             (region,)
         )
     row = cur.fetchone()
@@ -158,6 +181,7 @@ def getRandLoc(region="nyc"):
 
 #gets top scores to serve to leaderboard
 def top_scores(region="nyc", move_mode=None):
+    """Get top 25 scores for leaderboard from database"""
     conn = get_db_connection()
     cur  = conn.cursor()
 
@@ -186,12 +210,15 @@ def top_scores(region="nyc", move_mode=None):
     formatted_rows = []
     for row in rows:
         formatted_row = dict(row)
-        formatted_row['timestamp'] = datetime.strptime(row['timestamp'], '%Y-%m-%d %H:%M:%S')
+        formatted_row['timestamp'] = datetime.strptime(
+            row['timestamp'], '%Y-%m-%d %H:%M:%S'
+        )
         formatted_rows.append(formatted_row)
     
     return formatted_rows
 
 def get_user_stats(username):
+    """Get user statistics including completed games and scores"""
     conn = get_db_connection()
     cur = conn.cursor()
     
@@ -222,6 +249,7 @@ def get_user_stats(username):
     }
 
 def get_user_games(username):
+    """Get user's game history separated by move and nomove modes"""
     conn = get_db_connection()
     cur = conn.cursor()
     
@@ -256,13 +284,17 @@ def get_user_games(username):
     formatted_move = []
     for row in move_games:
         formatted_row = dict(row)
-        formatted_row['timestamp'] = datetime.strptime(row['timestamp'], '%Y-%m-%d %H:%M:%S')
+        formatted_row['timestamp'] = datetime.strptime(
+            row['timestamp'], '%Y-%m-%d %H:%M:%S'
+        )
         formatted_move.append(formatted_row)
     
     formatted_nomove = []
     for row in nomove_games:
         formatted_row = dict(row)
-        formatted_row['timestamp'] = datetime.strptime(row['timestamp'], '%Y-%m-%d %H:%M:%S')
+        formatted_row['timestamp'] = datetime.strptime(
+            row['timestamp'], '%Y-%m-%d %H:%M:%S'
+        )
         formatted_nomove.append(formatted_row)
     
     return {

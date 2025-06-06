@@ -1,3 +1,4 @@
+<!-- Main game template for playing rounds with StreetView and map -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -88,6 +89,7 @@
     {% endif %}
 
     <script>
+      // Pass game data to JavaScript for client-side game logic
       window.gameData = {
         lat: {{ lat|float }},
         lon: {{ lon|float }},
@@ -104,8 +106,6 @@
       };
     </script>
 
-
-
     <script src="{{ url_for('static', filename='js/play.js') }}"></script>
 
     <div id="settingsMenu">
@@ -118,6 +118,7 @@
     </div>
 
     <script>
+      // Apply dark mode if enabled in localStorage when DOM is loaded
       document.addEventListener('DOMContentLoaded', () => {
       if (localStorage.getItem('dark-mode') === 'true') {
         document.body.classList.add('dark-mode');

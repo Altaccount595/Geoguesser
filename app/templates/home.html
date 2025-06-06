@@ -1,3 +1,4 @@
+<!-- Home page template for region selection and navigation -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -61,7 +62,7 @@
   </label>
 
     <script>
-
+    // Dark mode toggle functionality with localStorage persistence
     const toggle = document.getElementById('darkModeToggle');
     const isDarkMode = localStorage.getItem('dark-mode') === 'true';
 
@@ -81,18 +82,16 @@
       localStorage.setItem('dark-mode', enabled);
     });
 
+    // Initialize dark mode state on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      const saved = localStorage.getItem('dark-mode') === 'true';
+      const toggle = document.getElementById('darkModeToggle');
+      const body = document.body;
+      toggle.checked = saved;
+      body.classList.toggle('dark-mode', saved);
+    });
 
-      // Optional: remember the toggle state
-      window.addEventListener('DOMContentLoaded', () => {
-        const saved = localStorage.getItem('dark-mode') === 'true';
-        const toggle = document.getElementById('darkModeToggle');
-        const body = document.body;
-        toggle.checked = saved;
-        body.classList.toggle('dark-mode', saved);
-      });
-
-      localStorage.setItem('dark-mode', toggle.checked);
-      //}
+    localStorage.setItem('dark-mode', toggle.checked);
 
   </script>
   </div>

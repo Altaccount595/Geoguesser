@@ -1,3 +1,6 @@
+// Main game functionality for play page with map interaction and game logic
+
+// Extract game data from the server
 const {
     lat: initLat,
     lon: initLon,
@@ -11,6 +14,7 @@ const {
     timeout
 } = window.gameData;
 
+// Map view configurations for different regions
 const regionView = {
     nyc:    { center:[40.7128, -74.0060], zoom: 11 },
     europe: { center:[54.5, 15.0], zoom: 4 },
@@ -20,6 +24,7 @@ const regionView = {
     world:  { center: [20, 0], zoom: 2 }
 };
 
+// Initialize map with region-specific view
 const { center, zoom } = regionView[region] || regionView.world;
 var map = L.map('mini').setView(center, zoom);
 
@@ -35,11 +40,13 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 //attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(map);
 
+// Handle map container resize for smooth transitions
 const container = document.getElementById('mini-container');
 container.addEventListener('transitionend', () => {   //hover stuff (hopefully it owrks??)
     map.invalidateSize();
 });
 
+// Mini map hover interaction to enlarge and shrink
 const miniContainer = document.getElementById('mini-container');
 let shrinkTimeout;
 
@@ -54,6 +61,7 @@ miniContainer.addEventListener('mouseleave', () => {
     }, 500); // Delay shrinking by 500ms
 });
 
+// Handle map clicks to place guess marker and capture coordinates
 map.on('click', function(e) {
     L.popup({closeButton: false})
         .setLatLng(e.latlng)
@@ -68,11 +76,14 @@ map.on('click', function(e) {
     guessBtn.hidden = false;
 });
 
+// Customize map attribution
 map.attributionControl.setPrefix('');
 map.attributionControl.addAttribution('© DevoGuessr');
 
+// Submit guess when button is clicked
 guessBtn.onclick=()=>document.getElementById('guessForm').submit();
 
+// Timer functionality for timed game mode
 if (mode === 'timed' && !guessed && remaining > 0) {
     (function(){
         let t = remaining;
@@ -81,7 +92,7 @@ if (mode === 'timed' && !guessed && remaining > 0) {
         t -= 1;
         if (t <= 0){
             clearInterval(tick);
-            // Submit a timeout form
+            // Submit a timeout form when time runs out
             const form = document.getElementById('guessForm');
             const timeoutInput = document.createElement('input');
             timeoutInput.type = 'hidden';
@@ -97,11 +108,13 @@ if (mode === 'timed' && !guessed && remaining > 0) {
     })();
 }
 
+// Results display after a guess is submitted
 if (guessed){
+    // Create results map to show actual location and guess
     const res = L.map('resultMap',{zoomControl:false,attributionControl:false});
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(res);
 
-    //get players guess g and actual answer a
+    // Get players guess and actual answer coordinates
     const a = [initLat, initLon];
 
     // Only show guess marker and line if not a timeout
@@ -116,6 +129,7 @@ if (guessed){
 
     L.circleMarker(a,{radius:6,color:'red',fillColor:'red'}).addTo(res); //red marker for actual location
 
+    // Animate points counter from 0 to earned points
     // credit to Doctor Stanley H[Wh]oo blackjack.js animateBalanceChange
     const ptsSpan = document.getElementById('pts');
     const ptsTarget = roundPts;
@@ -131,6 +145,7 @@ if (guessed){
         ptsSpan.textContent = current;
     }, 20);
 
+    // Show next round button and handle progression
     const nextBtn=document.getElementById('nextBtn');
     nextBtn.hidden=false;
     nextBtn.onclick=()=>{
@@ -145,7 +160,7 @@ if (guessed){
 
 // Adapted from: MODEL: ChatGPT 4o TIME: 2025-05-24 6:45PM and from: MODEL : ChatGPT 4o TIME: 2025-06-02 10:35PM
 // Purpose: redirect user to home if browser navigation is back/forward
-// Prompt: how do i tell when a page is reshown by a back/forward button and automatically send the user to the home page when this button is pressed?”
+// Prompt: "how do i tell when a page is reshown by a back/forward button and automatically send the user to the home page when this button is pressed?”
 // Handle navigation control - prevent going back through rounds
 (function setupNavigationControl() {
     let hasLeftGame = false;
@@ -193,6 +208,7 @@ if (guessed){
     }
 })();
 
+// Enable dragging of the mini map container
  (function enableMiniMapDraggingAndResizing() {
   const container = document.getElementById('mini-container');
   const mapElement = document.getElementById('mini');
@@ -246,6 +262,7 @@ const resizeObserver = new ResizeObserver(
   });
 })();
 
+// Enable custom resizing of the mini map container using corner handles
 (function enableCustomResize() {
   const container = document.getElementById('mini-container');
   const handles = container.querySelectorAll('.resize-handle');

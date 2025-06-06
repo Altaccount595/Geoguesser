@@ -30,11 +30,10 @@ POINT_CAP = 5000
 app = Flask(__name__)
 app.secret_key = os.urandom(32)
 
-#db.create_db()
-
 # helper functions
 
 def getKey():
+    """Retrieve Google Street View API key from file"""
     try:
         with open('keys/streetview.txt', 'r') as file:
             key = file.read().strip()
@@ -45,6 +44,7 @@ def getKey():
     #return os.environ["MAPS_KEY"] for droplet
 
 def toRadians(degree):
+    """Convert degrees to radians"""
     return degree *(math.pi / 180.0)
 
 def generate_latex_calculation(distance, max_dist, points):
@@ -53,6 +53,7 @@ def generate_latex_calculation(distance, max_dist, points):
     return latex
 
 def haversine(lat1, lon1, lat2, lon2):
+    """Calculate great circle distance between two points on Earth"""
     lat1 = toRadians(lat1)
     lon1 = toRadians(lon1)
     lat2 = toRadians(lat2)
@@ -69,6 +70,7 @@ def haversine(lat1, lon1, lat2, lon2):
     return RADIUS * c
 
 def max_distance(region):
+    """Get maximum possible distance for a given region"""
     return REGION_MAX_DISTANCE.get(region, REGION_MAX_DISTANCE["world"])
 
 def check_guess():
@@ -89,16 +91,19 @@ def check_guess():
 
 @app.route("/")
 def landing():
+    """Landing page route - shows home if logged in, else landing page"""
     if "username" in session:
         return render_template("home.html", username=session["username"])
     return render_template("landing.html")
 
 @app.route("/home")
 def home():
+    """Home page route for authenticated users"""
     return render_template("home.html", username=session.get("username"))
 
 @app.route("/results/<mode>/<region>")
 def results(mode, region):
+    """Display game results page with score breakdown and calculations"""
     if "results" not in session:
         return render_template("home.html", username=session.get("username"))
     data = session["results"]
@@ -137,7 +142,12 @@ def play(mode, region):
         return redirect(url_for("landing"))
 
     if session.get("game_left") and "round" in session:
-        for k in ("round", "location", "history", "expires", "mode", "timer_seconds", "move_mode", "game_start_time", "round_start_time", "timeout_occurred", "game_left"):
+        keys_to_remove = (
+            "round", "location", "history", "expires", "mode", 
+            "timer_seconds", "move_mode", "game_start_time", 
+            "round_start_time", "timeout_occurred", "game_left"
+        )
+        for k in keys_to_remove:
             session.pop(k, None)
         return redirect(url_for("region_page", region=region))
 
@@ -148,7 +158,12 @@ def play(mode, region):
     
     # Reset game state for fresh games or region/mode changes
     if "fresh" in request.args:
-        for k in ("round", "location", "history", "expires", "mode", "region", "timer_seconds", "move_mode", "game_start_time", "round_start_time", "game_left"):
+        keys_to_remove = (
+            "round", "location", "history", "expires", "mode", "region", 
+            "timer_seconds", "move_mode", "game_start_time", 
+            "round_start_time", "game_left"
+        )
+        for k in keys_to_remove:
             session.pop(k, None)
         
         clean_url = url_for('play', mode=mode, region=region)
@@ -158,8 +173,14 @@ def play(mode, region):
             clean_url += f"?move={move_mode}"
         return redirect(clean_url)
 
-    if "round" in session and (session.get("mode") != mode or session.get("region") != region):
-        for k in ("round", "location", "history", "expires", "mode", "region", "timer_seconds", "move_mode", "game_start_time", "round_start_time", "game_left"):
+    if ("round" in session and 
+        (session.get("mode") != mode or session.get("region") != region)):
+        keys_to_remove = (
+            "round", "location", "history", "expires", "mode", "region", 
+            "timer_seconds", "move_mode", "game_start_time", 
+            "round_start_time", "game_left"
+        )
+        for k in keys_to_remove:
             session.pop(k, None)
 
     # Initialize new game
@@ -184,7 +205,9 @@ def play(mode, region):
     if request.method == "POST":
         # Handle timeout submission from js
         if "timeout" in request.form:
-            round_time = time.time() - session.get("round_start_time", time.time())
+            round_time = (
+                time.time() - session.get("round_start_time", time.time())
+            )
             session["history"].append((max_distance(region), 0))
             session.modified = True
 
@@ -210,9 +233,13 @@ def play(mode, region):
             )
 
         if "input" in request.form and "next" not in request.form:
-            round_time = time.time() - session.get("round_start_time", time.time())
+            round_time = (
+                time.time() - session.get("round_start_time", time.time())
+            )
             dist = check_guess()
-            pts = round(POINT_CAP * math.exp(-10 * (dist / max_distance(region))))
+            pts = round(
+                POINT_CAP * math.exp(-10 * (dist / max_distance(region)))
+            )
             guess = list(map(float, request.form["input"].split(", ")))
             actual = [session["location"]["lat"], session["location"]["long"]]
 
@@ -244,7 +271,9 @@ def play(mode, region):
 
             if session["round"] > 5:
                 total = sum(p for _, p in session["history"])
-                game_time = time.time() - session.get("game_start_time", time.time())
+                game_time = (
+                    time.time() - session.get("game_start_time", time.time())
+                )
                 add_score(
                     session["username"],
                     points=total,
@@ -254,27 +283,43 @@ def play(mode, region):
                     move_mode=session.get("move_mode", "move"),
                     game_time=game_time
                 )
-                session.setdefault("games", []).append({"scores": session["history"][:],"total":  total })
+                session.setdefault("games", []).append({
+                    "scores": session["history"][:],
+                    "total": total
+                })
                 session["results"] = {
                     "history": session["history"],
                     "total": total,
                     "mode":session["mode"]
                 }
-                for k in ("round","location","history","expires","mode", "timer_seconds", "move_mode", "game_start_time", "round_start_time", "timeout_occurred", "game_left"):
+                keys_to_remove = (
+                    "round", "location", "history", "expires", "mode", 
+                    "timer_seconds", "move_mode", "game_start_time", 
+                    "round_start_time", "timeout_occurred", "game_left"
+                )
+                for k in keys_to_remove:
                     session.pop(k, None)
                 return redirect(url_for("results", mode=mode, region=region))
 
             lat,lon = getRandLoc(region)
             session["location"] = {"lat": lat, "long": lon, "heading": 0}
             session["round_start_time"] = time.time()
-            if session["mode"] == "timed" and session.get("timer_seconds", 60) > 0:
+            if (session["mode"] == "timed" and 
+                session.get("timer_seconds", 60) > 0):
                 session["expires"] = time.time() + session["timer_seconds"]
             session.modified = True
 
             if mode == "timed":
-                return redirect(url_for("play", mode=mode, region=region, timer=session.get("timer_seconds", 60), move=session.get("move_mode", 'move')))
+                return redirect(url_for(
+                    "play", mode=mode, region=region, 
+                    timer=session.get("timer_seconds", 60), 
+                    move=session.get("move_mode", 'move')
+                ))
             else:
-                return redirect(url_for("play", mode=mode, region=region, move=session.get("move_mode", 'move')))
+                return redirect(url_for(
+                    "play", mode=mode, region=region, 
+                    move=session.get("move_mode", 'move')
+                ))
 
     remaining = None
     if session["mode"] == "timed" and session.get("timer_seconds", 60) > 0:
@@ -300,19 +345,31 @@ def leave_game():
     """clears game state and returns to region page"""
     region = request.form.get("region", "nyc")
     session["game_left"] = True
-    for k in ("round", "location", "history", "expires", "mode", "timer_seconds", "move_mode", "game_start_time", "round_start_time", "timeout_occurred"):
+    keys_to_remove = (
+        "round", "location", "history", "expires", "mode", 
+        "timer_seconds", "move_mode", "game_start_time", 
+        "round_start_time", "timeout_occurred"
+    )
+    for k in keys_to_remove:
         session.pop(k, None)
     return redirect(url_for("region_page", region=region))
 
 @app.route("/region/<region>", methods=["GET", "POST"])
 def region_page(region):
+    """Display region selection page with leaderboards"""
     move_scores = db.top_scores(region, move_mode="move")[:25]
     nomove_scores = db.top_scores(region, move_mode="nomove")[:25]
     
     username = session.get("username")
     if request.method == "POST" and not username:
         flash("You must be logged in to play")
-    return render_template("region.html", region=region, move_scores=move_scores, nomove_scores=nomove_scores, username=username)
+    return render_template(
+        "region.html", 
+        region=region, 
+        move_scores=move_scores, 
+        nomove_scores=nomove_scores, 
+        username=username
+    )
 
 @app.route("/profile")
 def profile():
@@ -324,12 +381,20 @@ def profile():
     stats = db.get_user_stats(username)
     games_data = db.get_user_games(username)
     
-    return render_template("profile.html", username=username, stats=stats, games=games_data)
+    return render_template(
+        "profile.html", 
+        username=username, 
+        stats=stats, 
+        games=games_data
+    )
 
 @app.route("/information")
 def information():
     """Display information page"""
-    return render_template("information.html", username=session.get("username"))
+    return render_template(
+        "information.html", 
+        username=session.get("username")
+    )
 
 @app.route("/auth", methods=["GET", "POST"])
 def auth():
@@ -354,12 +419,14 @@ def auth():
 
 @app.route('/createAccount')
 def createAccount():
+    """Display account creation page"""
     if "username" in session:
         return redirect(url_for("home"))
     return render_template("createAccount.html")
 
 @app.route('/logout')
 def logout():
+    """Log out current user by removing username from session"""
     session.pop('username', None)
     return redirect(url_for("landing"))
 

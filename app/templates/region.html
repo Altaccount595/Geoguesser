@@ -1,3 +1,4 @@
+<!-- Region page template for game mode selection and leaderboards -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -92,12 +93,14 @@
   </div>
 
   <script>
+    // Pass region data to JavaScript for game initialization
     window.regionData = {
       region: "{{ region }}"
     };
   </script>
   <script src="{{ url_for('static', filename='js/region.js') }}"></script>
   <script>
+  // Apply dark mode if enabled in localStorage
   if (localStorage.getItem('dark-mode') === 'true') {
     document.body.classList.add('dark-mode');
   }

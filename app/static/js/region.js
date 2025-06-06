@@ -1,3 +1,5 @@
+// Region page game mode and timer selection functionality
+
 // Wait for the page to load
 document.addEventListener('DOMContentLoaded', function() {
     // Get all the buttons and elements we need
@@ -36,18 +38,19 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Handle time slider changes
+    // Handle time slider changes and update display format
     if (timeSlider) {
         timeSlider.addEventListener('input', function() {
             const seconds = parseInt(this.value);
             userChoices.timeInSeconds = seconds;
             
-            // Update the display
+            // Update the display text based on time value
             if (seconds === 0) {
                 timeDisplay.textContent = 'No limit';
             } else if (seconds < 60) {
                 timeDisplay.textContent = seconds + 's';
             } else {
+                // Convert to minutes and seconds format
                 const minutes = Math.floor(seconds / 60);
                 const leftoverSeconds = seconds % 60;
                 
@@ -60,19 +63,19 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Handle play button click
+    // Handle play button click and redirect to game with selected settings
     if (playButton) {
         playButton.addEventListener('click', function() {
             // Get the region from the page data
             const region = window.regionData.region;
             
-            // Decide if it's timed or untimed
+            // Decide if it's timed or untimed based on timer setting
             let gameMode = 'untimed';
             if (userChoices.timeInSeconds > 0) {
                 gameMode = 'timed';
             }
             
-            // Build the URL
+            // Build the URL with game parameters
             let url = '/play/' + gameMode + '/' + region + '?fresh=1';
             url = url + '&move=' + userChoices.moveMode;
             
