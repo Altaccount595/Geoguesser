@@ -35,7 +35,7 @@ app.secret_key = os.urandom(32)
 def getKey():
     """Retrieve Google Street View API key from file"""
     try:
-        with open('keys/streetview.txt', 'r') as file:
+        with open('keys/key_streetview.txt', 'r') as file:
             key = file.read().strip()
     except:
         print('error')
