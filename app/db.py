@@ -42,7 +42,7 @@ def create_db():
             points INTEGER NOT NULL,
             distance REAL NOT NULL,
             game_time REAL DEFAULT 0,
-            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+            timestamp DATETIME DEFAULT (datetime('now', 'localtime'))
 	);
 
         CREATE TABLE IF NOT EXISTS rounds (
@@ -55,7 +55,7 @@ def create_db():
             points INTEGER NOT NULL,
             distance REAL NOT NULL,
             round_time REAL DEFAULT 0,
-            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+            timestamp DATETIME DEFAULT (datetime('now', 'localtime'))
         );
 
 	CREATE TABLE IF NOT EXISTS loc (
@@ -107,7 +107,7 @@ def add_score(username, points, distance, mode="untimed", region="nyc", move_mod
     user_id = id["user_id"]
     
     cur.execute(
-        "INSERT INTO scores (user_id, region, mode, move_mode, points, distance, game_time) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        "INSERT INTO scores (user_id, region, mode, move_mode, points, distance, game_time, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now', 'localtime'))",
         (user_id, region, mode, move_mode, points, distance, game_time)
     )
     
