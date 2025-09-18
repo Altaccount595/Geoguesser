@@ -1,5 +1,15 @@
 # tophertime-studios__tawabb_alexl175_jacobl153_jonathanm764
 
+This is a forked repo of a geoguesser clone I created with my friends.
+NOTE: API key doesn't work anymore because we broke and can't afford Google Maps API. However, you can still get a feel for what the website was supposed to feel like, and the frontend styling and back end databases still work as intended.
+Let me know if there is anything else you want to see from a project in order for me to join FSAB.
+
+
+
+
+
+
+
 # Roster:
 **PM:** Tawab Berri
 
@@ -69,15 +79,6 @@ $ cd PATH/TO/tophertime-studios__tawabb_alexl175_jacobl153_jonathanm764/
 $ pip install -r requirements.txt
 ```
         
-# Launch Codes
-
-## Best Way
-
-1. Visit https://aluo.tech on any modern browser
-2. Enjoy!
-
-## The DEVO Way
-
 1. Navigate to project directory:
 
 ```
